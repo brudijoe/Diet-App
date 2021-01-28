@@ -1,8 +1,6 @@
 # Diet-App
 
-> With this app you can create and delete notes for yourself.
-
-To add a note, just click on "Notiz erstellen..." and you can add a title and your note. To delete it, just click on the trashbin icon.
+> With this app you can check your diet process.
 
 ### **Stack used:**  
 * MongoDB - Document database

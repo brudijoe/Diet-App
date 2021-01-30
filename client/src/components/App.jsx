@@ -1,24 +1,69 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Weight from "./Weight";
 // AUTH0
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
 import Profile from "./Profile";
 import { useAuth0 } from '@auth0/auth0-react';
+// CHART
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 
 function App() {
+
+  // DUMMY DATA TO PREVENT CRASHES
+  const dummyData = [
+    {weight: "70", date: "30.01.2021"}
+  ]
+
+  // STATE FOR WEIGHT-DATA
+  const [weightData, setWeightData] = useState(dummyData);
+  console.log(weightData);
+
+  // ADD WEIGHT
+  function addWeight(newWeight) {
+    setWeightData((prevWeightData) => {
+      return [...prevWeightData, newWeight];
+    });
+  }
+
+  //   // ABGENOMMEN
+  //   let lostWeight = startWeight - weight;
+  //   document.getElementById("lostweight").value = lostWeight;
+  //   // WENN ZU GENOMMEN BORDER-COLOR ÄNDERN
+  //   if (weight < startWeight) {
+  //     borderColor = ["rgba(0, 175, 145, 1)"];
+  //   } else {
+  //     borderColor = ["rgba(245, 134, 52, 1)"];
+  //   }
+  // }
+
   const { isLoading } = useAuth0();
 
-  if (isLoading) return <div>Loading...</div>
-  
-  return (
-    <div>
-      <h1>Hallo Welt</h1>
-      <LoginButton />
-      <LogoutButton />
-      <Profile />
-    </div>
-  );
+  if (isLoading) {
+    return <div>Loading...</div> 
+  } else {
+    return (
+      <div className="root-container">
+        <h1>Hallo User</h1>
+        <Weight onAdd={addWeight} weightData={weightData} />
+        <LoginButton />
+        <LogoutButton />
+        <Profile />
+        <div className="chart-container">
+        <LineChart width={400} height={200} data={weightData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+          <Line type="monotone" dataKey="weight" stroke="#8884d8" />
+          <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+          <XAxis dataKey="date" />
+          <YAxis dataKey="weight"/>
+          <Tooltip />
+        </LineChart>
+        </div>
+      </div>
+    );
+  }
+
+
 }
 
 export default App;

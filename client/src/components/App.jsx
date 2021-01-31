@@ -7,18 +7,25 @@ import LogoutButton from "./LogoutButton";
 import Profile from "./Profile";
 import { useAuth0 } from '@auth0/auth0-react';
 // CHART
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 function App() {
 
   // DUMMY DATA TO PREVENT CRASHES
   const dummyData = [
-    {weight: "70", date: "30.01.2021"}
+    {weight: "", date: ""}
   ]
 
   // STATE FOR WEIGHT-DATA
   const [weightData, setWeightData] = useState(dummyData);
   console.log(weightData);
+  // DUMMY Data aus dem ARRAY rauskriegen
+  if(weightData.length === 2 && weightData[0].weight === "") {
+    const currentStateCopy = [...weightData];
+    currentStateCopy.shift();
+    setWeightData(currentStateCopy);
+  }
+
 
   // ADD WEIGHT
   function addWeight(newWeight) {
@@ -52,8 +59,9 @@ function App() {
         <Profile />
         <div className="chart-container">
         <LineChart width={400} height={200} data={weightData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-          <Line type="monotone" dataKey="weight" stroke="#8884d8" />
+          <Line name="Gewicht[kg]" type="monotone" dataKey="weight" stroke="#8884d8" />
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+          <Legend verticalAlign="top" height={36}/>
           <XAxis dataKey="date" />
           <YAxis dataKey="weight"/>
           <Tooltip />

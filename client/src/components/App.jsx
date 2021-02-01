@@ -9,7 +9,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 // CHART
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
-function App() {
+function App(props) {
 
   // DUMMY DATA TO PREVENT CRASHES
   const dummyData = [
@@ -34,16 +34,18 @@ function App() {
     });
   }
 
-  //   // ABGENOMMEN
-  //   let lostWeight = startWeight - weight;
-  //   document.getElementById("lostweight").value = lostWeight;
-  //   // WENN ZU GENOMMEN BORDER-COLOR ÄNDERN
-  //   if (weight < startWeight) {
-  //     borderColor = ["rgba(0, 175, 145, 1)"];
-  //   } else {
-  //     borderColor = ["rgba(245, 134, 52, 1)"];
-  //   }
-  // }
+  // TODO LETZTE WOCHE GEWICHT ABZIEHEN
+
+  // WENN INDEX DAVOR GRÖSSER IST ALS DANACH dann FARBE GRÜN SONST ROT
+  // ICH BRAUCHE IMMER DEN LETZTEN INDEX UND DEN DAVOR
+  let stroke = ["#00af91"];
+  if (weightData.length >= 2) {
+    if (weightData[weightData.length -2].weight > weightData[weightData.length -1].weight) {
+      stroke = ["#00af91"]
+    } else {
+      stroke = ["#f58634"];
+    }
+  }
 
   const { isLoading } = useAuth0();
 
@@ -59,7 +61,8 @@ function App() {
         <Profile />
         <div className="chart-container">
         <LineChart width={400} height={200} data={weightData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-          <Line name="Gewicht[kg]" type="monotone" dataKey="weight" stroke="#8884d8" />
+          <Line name="Gewicht[kg]" type="monotone" dataKey="weight" stroke={stroke} strokeWidth="2
+          " />
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
           <Legend verticalAlign="top" height={36}/>
           <XAxis dataKey="date" />

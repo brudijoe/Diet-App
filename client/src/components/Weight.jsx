@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 
 function Weight(props) {
-  const { user, isAuthenticated } = useAuth0();
+  const { isAuthenticated } = useAuth0();
 
   // TODO STATE FÜR WEIGHT-OBJEKT ANLEGEN
   const [currentWeight, setCurrentWeight] = useState({
@@ -13,15 +13,16 @@ function Weight(props) {
 
   // Datum für label
   const today = new Date();
-  const day = today.getDate();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
-  let currentDate = "";
-  if(month < 10) {
-    currentDate = day + ".0" + month + "." + year;
-  } else {
-    currentDate = day + "." + month + "." + year;
+  let day = today.getDate();
+  if (day < 10) {
+    day = "0" + day;
   }
+  let month = today.getMonth() + 1;
+  if(month < 10) {
+    month = "0" + month;
+  }
+  const year = today.getFullYear();
+  const currentDate = day + "." + month + "." + year;
   
 
   function handleChange(event) {
@@ -51,10 +52,23 @@ function Weight(props) {
     event.preventDefault();
   }
 
-  // LOST WEIGHT
-  let firstWeightData = props.weightData[0].weight;
-  let lastWeightData = props.weightData[props.weightData.length -1].weight;
-  let lostWeight = firstWeightData - lastWeightData;
+  // WEIGHT PROGRESS
+  let lastWeightData = "";
+  let weightBeforeLastWeightData = "";
+  let lastWeightProgress = "";
+  let firstWeightData = "";
+  let lostWeightProgress = "";
+
+  if (props.weightData.length >= 2) {
+    // LAST WEIGHT PROGRESS
+    lastWeightData = props.weightData[props.weightData.length -1].weight;
+    weightBeforeLastWeightData = props.weightData[props.weightData.length -2].weight;
+    lastWeightProgress = weightBeforeLastWeightData - lastWeightData;
+    // OVERALL WEIGHT PROGRESS
+    firstWeightData = props.weightData[0].weight;
+    lastWeightData = props.weightData[props.weightData.length -1].weight;
+    lostWeightProgress = firstWeightData - lastWeightData;
+  }
 
   return (
     isAuthenticated && (
@@ -64,8 +78,13 @@ function Weight(props) {
             <table>
               <tbody>
                   <tr>
+                    <td style={{textAlign: "center"}} colSpan="3">
+                      Fortschritt
+                    </td>
+                  </tr>
+                  <tr>
                   <td>
-                    <label>aktuelles Datum: </label>
+                    <label>Datum: </label>
                   </td>
                   <td>
                     <input type="text" name="date" value={currentDate} onChange={handleChange} readOnly />
@@ -73,11 +92,11 @@ function Weight(props) {
                   </tr>
                   <tr>
                     <td>
-                      <label>Gewicht[kg]: </label>
+                      <label>Gewicht: </label>
                     </td>
                     <td>
                       <input
-                        type="text"
+                        type="number"
                         name="weight"
                         value={currentWeight.weight}
                         onChange={handleChange}
@@ -87,10 +106,18 @@ function Weight(props) {
                   </tr>
                   <tr>
                     <td>
-                      <label>Abgenommen[kg]: </label>
+                      <label>letzte Woche: </label>
                     </td>
                     <td>
-                      <input type="text" name="" id="lostweight" value={lostWeight} readOnly />
+                      <input type="text" name="" value={lastWeightProgress} readOnly />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label>Gesamt: </label>
+                    </td>
+                    <td>
+                      <input type="text" name="" value={lostWeightProgress} readOnly />
                     </td>
                   </tr>
                   <tr>

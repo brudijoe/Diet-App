@@ -15,15 +15,66 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // Establish DB connection
+const DB_HOST = process.env.DB_HOST;
+const DB_USER = process.env.DB_USER;
+const DB_KEY = process.env.DB_KEY;
+const mongoAtlas ="mongodb+srv://"+DB_USER+":"+DB_KEY+"@"+DB_HOST+"/dietDB";
+const mongoLocal ="mongodb://localhost:27017/dietDB";
+
+mongoose.connect(mongoAtlas || mongoLocal, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+  connectTimeoutMS: 10000
+});
+ 
+// Create diet schema
+const dietSchema = new mongoose.Schema(
+  {
+    //TODO Send minlength/maxlength error to frontend
+    weight: {
+      type: String,
+      required: [true, "Bitte Gewicht angeben"],
+      minlength: 1,
+      maxlength: 3,
+      trim: true
+    },
+    date: {
+      type: String,
+      //Unique damit nur max einmal am Tag wiegen
+      //unique: true
+    }
+  },
+  { collection: "weightData" }
+);
+  
+ // Create single model
+const Weight = mongoose.model("Weight", dietSchema);
  
 // ROUTE TO GET WEIGHT DATA
-app.get("/api/weight", (req, res) => {
-
+app.get("/api/weightData/:userID", (req, res) => {
+  Weight.find({}, function(err, dietDB) {
+    if (err) {
+      res.status(400).json({"error": err});
+    } else {
+      res.json(dietDB);
+    }
+  });
 })
  
 // ROUTE TO ADD WEIGHT
-app.post("/api/weight/add", (req, res) => {
+app.post("/api/weightData/:userID", (req, res) => {
+  const newWeight = new Weight(req.body);
+  console.log("Neues Gewicht(server.js): " + newWeight);
 
+  newWeight.save((err) => {
+    if (err) {
+      res.status(400).json({"error": err});
+    } else {
+      res.status(200).json("Weight saved successfully.");
+    }
+  });
 });
 
 

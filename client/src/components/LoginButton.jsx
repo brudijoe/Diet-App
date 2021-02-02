@@ -8,7 +8,7 @@ function LoginButton() {
 
     return (
         !isAuthenticated && (
-            <button onClick={() => loginWithRedirect()}>
+            <button onClick={(userSub) => loginWithRedirect()}>
                 Anmelden
             </button>
         )

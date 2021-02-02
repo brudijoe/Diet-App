@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 
 function Weight(props) {
-  const { user, isAuthenticated } = useAuth0();
+  const { isAuthenticated } = useAuth0();
 
   // TODO STATE FÜR WEIGHT-OBJEKT ANLEGEN
   const [currentWeight, setCurrentWeight] = useState({
@@ -52,19 +52,23 @@ function Weight(props) {
     event.preventDefault();
   }
 
-  // LAST WEIGHT PROGRESS
-  let lastWeightData = props.weightData[props.weightData.length -1].weight;
+  // WEIGHT PROGRESS
+  let lastWeightData = "";
   let weightBeforeLastWeightData = "";
-  let lastWeightProgress = ""
+  let lastWeightProgress = "";
+  let firstWeightData = "";
+  let lostWeightProgress = "";
+
   if (props.weightData.length >= 2) {
+    // LAST WEIGHT PROGRESS
+    lastWeightData = props.weightData[props.weightData.length -1].weight;
     weightBeforeLastWeightData = props.weightData[props.weightData.length -2].weight;
     lastWeightProgress = weightBeforeLastWeightData - lastWeightData;
+    // OVERALL WEIGHT PROGRESS
+    firstWeightData = props.weightData[0].weight;
+    lastWeightData = props.weightData[props.weightData.length -1].weight;
+    lostWeightProgress = firstWeightData - lastWeightData;
   }
-
-  // OVERALL WEIGHT PROGRESS
-  let firstWeightData = props.weightData[0].weight;
-  lastWeightData = props.weightData[props.weightData.length -1].weight;
-  let lostWeightProgress = firstWeightData - lastWeightData;
 
   return (
     isAuthenticated && (
@@ -92,7 +96,7 @@ function Weight(props) {
                     </td>
                     <td>
                       <input
-                        type="text"
+                        type="number"
                         name="weight"
                         value={currentWeight.weight}
                         onChange={handleChange}

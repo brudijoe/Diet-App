@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Component } from "react";
 import axios from "axios";
 import Weight from "./Weight";
 // AUTH0
@@ -8,8 +8,15 @@ import Profile from "./Profile";
 import { useAuth0 } from '@auth0/auth0-react';
 // CHART
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { set } from "mongoose";
 
 function App(props) {
+
+  // AUTH
+  const { user, isAuthenticated, isLoading } = useAuth0();
+
+  // STATE IS USER LOGGED IN
+  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 
   // DUMMY DATA TO PREVENT CRASHES
   const dummyData = [
@@ -25,10 +32,36 @@ function App(props) {
     currentStateCopy.shift();
     setWeightData(currentStateCopy);
   }
-
+  
+  // GET WEIGHTDATA
+  // PROBLEM user.sub ist unbekannt beim laden
+  // useEffect(() => {
+  //     axios
+  //     .get("/api/weightData/"+user.sub)
+  //     .then((res) => setWeightData(res.data))
+  //     .catch((err) => console.log(err));
+  // },[]);
+  
+  // ANDERE LÖSUNG
+  if(!userIsLoggedIn && isAuthenticated) {
+    axios
+    .get("/api/weightData/"+user.sub)
+    .then((res) => setWeightData(res.data))
+    .catch((err) => console.log(err));
+    setUserIsLoggedIn(true);
+  }
 
   // ADD WEIGHT
   function addWeight(newWeight) {
+    axios
+    .post("/api/weightData/"+user.sub, newWeight)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
     setWeightData((prevWeightData) => {
       return [...prevWeightData, newWeight];
     });
@@ -47,19 +80,20 @@ function App(props) {
     }
   }
 
-  const { isLoading } = useAuth0();
-
   if (isLoading) {
     return <div>Loading...</div> 
   } else {
     return (
       <div className="root-container">
-        <h1>Hallo User</h1>
+        {isAuthenticated && ( 
+          <h1>Hallo {user.name}</h1>
+        )}
         <Weight onAdd={addWeight} weightData={weightData} />
         <LoginButton />
         <LogoutButton />
         <Profile />
         <div className="chart-container">
+        {isAuthenticated && ( 
         <LineChart width={400} height={200} data={weightData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
           <Line name="Gewicht[kg]" type="monotone" dataKey="weight" stroke={stroke} strokeWidth="2
           " />
@@ -68,7 +102,8 @@ function App(props) {
           <XAxis dataKey="date" />
           <YAxis dataKey="weight"/>
           <Tooltip />
-        </LineChart>
+        </LineChart> 
+        )}   
         </div>
       </div>
     );

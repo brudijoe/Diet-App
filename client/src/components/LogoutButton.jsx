@@ -7,7 +7,7 @@ function LogoutButton() {
   return (
     isAuthenticated && (
       <button onClick={() => logout()}>
-        Abmelden
+          Abmelden
       </button>
     )
   )

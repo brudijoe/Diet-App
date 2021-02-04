@@ -1,14 +1,15 @@
 # Diet-App
 
-> With this app you can create and delete notes for yourself.
-
-To add a note, just click on "Notiz erstellen..." and you can add a title and your note. To delete it, just click on the trashbin icon.
+> With this app you can check your diet process.
 
 ### **Stack used:**  
 * MongoDB - Document database
 * Express(.js) - Node.js web framework
 * React(.js) - Client-side JavaScript framework
 * Node(.js) - JavaScript web server 
+* Bootstrap - CSS Framework
+* Recharts - Chart Library
+* Auth0 - Authorization/Authentication platform
 
 ## Quick Start
 
@@ -41,7 +42,7 @@ npm run client
 
 ## Deployment
 
-There is a Heroku post build script so that you do not have to compile your React frontend manually, it is done on the server. Simply push to Heroku and it will build and load the client index.html page.
+There is a Heroku post build script so that you do not have to compile your React frontend manually, it is done on the server. Simply push to Heroku and it will build and load the client index.html page but you will need a credit card for verify your persona because this app uses auth0.
 
 ## App Info
 

@@ -21,7 +21,7 @@ const DB_KEY = process.env.DB_KEY;
 const mongoAtlas ="mongodb+srv://"+DB_USER+":"+DB_KEY+"@"+DB_HOST+"/dietDB";
 const mongoLocal ="mongodb://localhost:27017/dietDB";
 
-mongoose.connect(mongoAtlas || mongoLocal, {
+mongoose.connect(/*mongoAtlas ||*/ mongoLocal, {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   useCreateIndex: true,

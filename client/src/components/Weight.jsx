@@ -63,78 +63,54 @@ function Weight(props) {
     // LAST WEIGHT PROGRESS
     lastWeightData = props.weightData[props.weightData.length -1].weight;
     weightBeforeLastWeightData = props.weightData[props.weightData.length -2].weight;
-    lastWeightProgress = weightBeforeLastWeightData - lastWeightData;
+    lastWeightProgress = weightBeforeLastWeightData - lastWeightData + " KG";
     // OVERALL WEIGHT PROGRESS
     firstWeightData = props.weightData[0].weight;
     lastWeightData = props.weightData[props.weightData.length -1].weight;
-    lostWeightProgress = firstWeightData - lastWeightData;
+    lostWeightProgress = firstWeightData - lastWeightData + " KG";
   }
 
   return (
     isAuthenticated && (
       <div className="top-container">
-        <div className="top-form">
           <form>
-            <table>
-              <tbody>
-                  <tr>
-                    <td style={{textAlign: "center"}} colSpan="3">
-                      Fortschritt
-                    </td>
-                  </tr>
-                  <tr>
-                  <td>
-                    <label>Datum: </label>
-                  </td>
-                  <td>
-                    <input type="text" name="date" value={currentDate} onChange={handleChange} readOnly />
-                  </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <label>Gewicht: </label>
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        name="weight"
-                        value={currentWeight.weight}
-                        onChange={handleChange}
-                        placeholder="Wöchentlich wiegen"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <label>letzte Woche: </label>
-                    </td>
-                    <td>
-                      <input type="text" name="" value={lastWeightProgress} readOnly />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <label>Gesamt: </label>
-                    </td>
-                    <td>
-                      <input type="text" name="" value={lostWeightProgress} readOnly />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colSpan="1"></td>
-                    <td colSpan="2">
-                      <button id="submitbutton" onClick={submitWeight}>
+          <div class="form-group">
+            <label>Datum: </label>
+            <input type="text" class="form-control" name="date" value={currentDate} onChange={handleChange} readOnly />
+          </div>
+
+          <div class="form-group">
+            <label>Momentanes Gewicht in KG: </label>
+            <input
+              type="number"
+              class="form-control"
+              name="weight"
+              min="1"
+              max="999"
+              minlength="1"
+              maxlength="3"
+              value={currentWeight.weight}
+              onChange={handleChange}
+            />
+            <small id="emailHelp" class="form-text text-muted">Wöchentlich wiegen</small>
+          </div>
+
+          <div class="form-group">
+            <label>Gewichtsdifferenz seit letzter Woche: </label>
+            <input type="text" class="form-control" name="" value={lastWeightProgress} readOnly />
+          </div>
+
+          <div class="form-group">
+            <label>Gesamtdifferenz: </label>
+            <input type="text" class="form-control" name="" value={lostWeightProgress} readOnly />
+          </div>
+            <button id="submitweightbutton" onClick={submitWeight}>
                         Bestätigen
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-            </table>
+            </button>
           </form>
-        </div>
       </div>
     )
-  );
+  )
 }
 
 export default Weight;

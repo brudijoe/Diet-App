@@ -1,5 +1,96 @@
-chart-container {
-    width: 25rem;
-    height: 25rem;
+/*ELEMENTS*/
+
+body {
+    background-color: #393e46;
+    text-align: center;
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
 }
+
+header {
+    grid-area: header;
+    display: grid;
+    color: white;
+    margin: auto 0;
+}
+
+footer {
+    grid-area: footer;
+    display: grid;
+    color: white;
+    margin: auto 0;
+}
+
+form{
+    color:white;
+    text-align: left;
+}
+
+label {
+    display: block;
+}
+
+input {
+    display: block;
+}
+
+
+/*CLASSES*/
+.root-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr ;
+    grid-template-rows: 1fr 2fr 2fr 0.25fr;
+    grid-template-areas: 
+        "header header"
+        "top-container chart-container"
+        "top-container chart-container"
+        "footer footer";
+    height: 100vh;
+}
+
+.top-container {
+    background-color: #222831;
+    border-collapse: collapse;
+    grid-area: top-container;
+    display: grid;
+    padding: 1rem;
+}
+
+.chart-container {
+    background-color: #222831;
+    grid-area: chart-container;
+    display: grid;
+    padding: 1rem;
+}
+
+.loginscreen {
+    text-align: center;
+}
+
+.login-container {
+    margin: 0 auto;
+}
+
+button {
+    background-color: #00adb5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    border: none;
+    color: white;
+    padding: 1.25rem 2.5rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1.25rem;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+/*IDs*/
+
+#submitweightbutton {
+    display: block;
+}
+
+
+
+
 

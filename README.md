@@ -13,7 +13,7 @@
 
 ## Quick Start
 
-To start you need to add an .env file with your own database credentials in the Diet-App folder.
+To start you need to add an .env file with your own database credentials in the Diet-App folder. Plus you need credentials for auth0.
 
 ```bash
 # Install dependencies for server

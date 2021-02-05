@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Weight from "./Weight";
-import LoginButton from "./LoginButton";
-import LogoutButton from "./LogoutButton";
 import Profile from "./Profile";
-import LoginScreen from "./LoginScreen";
 import Header from "./Header";
 import Footer from "./Footer";
 // AUTH0
@@ -21,7 +18,7 @@ function App(props) {
 
   // DUMMY DATA TO PREVENT CRASHES
   const dummyData = [
-    {weight: "", date: ""}
+    {userID: "", weight: "", date: ""}
   ]
 
   // STATE FOR WEIGHT-DATA

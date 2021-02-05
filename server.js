@@ -33,6 +33,9 @@ mongoose.connect(/*mongoAtlas ||*/ mongoLocal, {
 const dietSchema = new mongoose.Schema(
   {
     //TODO Send minlength/maxlength error to frontend
+    userID: {
+      type: String
+    },
     weight: {
       type: String,
       required: [true, "Bitte Gewicht angeben"],
@@ -54,7 +57,8 @@ const Weight = mongoose.model("Weight", dietSchema);
  
 // ROUTE TO GET WEIGHT DATA
 app.get("/api/weightData/:userID", (req, res) => {
-  Weight.find({}, function(err, dietDB) {
+  // HIER die aktuelle USERID benutzen
+  Weight.find({userID: req.params.userID}, function(err, dietDB) {
     if (err) {
       res.status(400).json({"error": err});
     } else {

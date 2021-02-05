@@ -3,13 +3,21 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 
 function Weight(props) {
-  const { isAuthenticated } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
+
+  // DUMMY DATA TO PREVENT CRASHES
+  const dummyData = [
+    {userID: "", weight: "", date: ""}
+  ]
 
   // TODO STATE FÜR WEIGHT-OBJEKT ANLEGEN
-  const [currentWeight, setCurrentWeight] = useState({
-      weight: "",
-      date: ""
-  });
+  const [currentWeight, setCurrentWeight] = useState(dummyData);
+  // DUMMY Data aus dem ARRAY rauskriegen
+  if(currentWeight.length === 2 && currentWeight[0].userID === "") {
+    const currentStateCopy = [...setCurrentWeight];
+    currentStateCopy.shift();
+    setCurrentWeight(currentStateCopy);
+  }
 
   // Datum für label
   const today = new Date();
@@ -30,12 +38,15 @@ function Weight(props) {
 
     // BEST PRACTICE?
     setCurrentWeight({
+      userID: user.sub,
       weight: "",
-      date: currentDate
+      date: currentDate 
     });
 
     setCurrentWeight((prevWeight) => {
+      console.log(prevWeight);
       return {
+        userID: user.sub,
         ...prevWeight,
         [name]: value
       };
@@ -44,11 +55,12 @@ function Weight(props) {
 
   // SUBMIT WEIGHT
   function submitWeight(event) {
+    props.onAdd(currentWeight);
     setCurrentWeight({
+      userID: user.sub,
       weight: "",
       date: currentDate
     });
-    props.onAdd(currentWeight);
     event.preventDefault();
   }
 
@@ -74,35 +86,35 @@ function Weight(props) {
     isAuthenticated && (
       <div className="top-container">
           <form>
-          <div class="form-group">
+          <div className="form-group">
             <label>Datum: </label>
-            <input type="text" class="form-control" name="date" value={currentDate} onChange={handleChange} readOnly />
+            <input type="text" className="form-control" name="date" value={currentDate} onChange={handleChange} readOnly />
           </div>
 
-          <div class="form-group">
+          <div className="form-group">
             <label>Momentanes Gewicht in KG: </label>
             <input
               type="number"
-              class="form-control"
+              className="form-control"
               name="weight"
               min="1"
               max="999"
-              minlength="1"
-              maxlength="3"
+              minLength="1"
+              maxLength="3"
               value={currentWeight.weight}
               onChange={handleChange}
             />
-            <small id="emailHelp" class="form-text text-muted">Wöchentlich wiegen</small>
+            <small id="emailHelp" className="form-text text-muted">Wöchentlich wiegen</small>
           </div>
 
-          <div class="form-group">
+          <div className="form-group">
             <label>Gewichtsdifferenz seit letzter Woche: </label>
-            <input type="text" class="form-control" name="" value={lastWeightProgress} readOnly />
+            <input type="text" className="form-control" name="lastWeightProgress" value={lastWeightProgress} readOnly />
           </div>
 
-          <div class="form-group">
+          <div className="form-group">
             <label>Gesamtdifferenz: </label>
-            <input type="text" class="form-control" name="" value={lostWeightProgress} readOnly />
+            <input type="text" className="form-control" name="lostWeightProgress" value={lostWeightProgress} readOnly />
           </div>
             <button id="submitweightbutton" onClick={submitWeight}>
                         Bestätigen

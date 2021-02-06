@@ -6,18 +6,25 @@ body {
     font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
 }
 
+img {
+    margin: 0 auto;
+    padding: 0.5rem;
+}
+
 header {
     grid-area: header;
     display: grid;
     color: white;
-    margin: auto 0;
+    margin: 0 auto;
+    padding: 0.5rem;
 }
 
 footer {
     grid-area: footer;
     display: grid;
     color: white;
-    margin: auto 0;
+    margin: 0 auto;
+    padding: 0.5rem;
 }
 
 form{
@@ -31,6 +38,10 @@ label {
 
 input {
     display: block;
+}
+
+h4 {
+    color: white;
 }
 
 
@@ -90,6 +101,17 @@ button {
     display: block;
 }
 
+#animatedlogo{
+    animation-name: logo;
+    animation-duration: 0.5s;
+}
+
+/*ANIMATIONS*/
+
+@keyframes logo {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
 
 
 

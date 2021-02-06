@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Weight from "./Weight";
-import Profile from "./Profile";
 import Header from "./Header";
 import Footer from "./Footer";
+import logo from "../images/Diet-App-Logo.png";
 // AUTH0
 import { useAuth0 } from '@auth0/auth0-react';
 // CHART
@@ -18,7 +18,7 @@ function App(props) {
 
   // DUMMY DATA TO PREVENT CRASHES
   const dummyData = [
-    {userID: "", weight: "", date: ""}
+    {userID: "", weight: 0, date: ""}
   ]
 
   // STATE FOR WEIGHT-DATA
@@ -79,7 +79,12 @@ function App(props) {
   }
 
   if (isLoading) {
-    return <div>Loading...</div> 
+    return (
+      <div>
+        <img id="animatedlogo" src={logo} alt="Logo"></img>
+        <h4>Loading...</h4>
+      </div>
+    );
   } else {
     return (
       <div className="root-container">

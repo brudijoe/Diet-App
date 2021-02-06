@@ -7,7 +7,7 @@ function Weight(props) {
 
   // DUMMY DATA TO PREVENT CRASHES
   const dummyData = [
-    {userID: "", weight: "", date: ""}
+    {userID: "", weight: 0, date: ""}
   ]
 
   // TODO STATE FÜR WEIGHT-OBJEKT ANLEGEN
@@ -65,22 +65,25 @@ function Weight(props) {
   }
 
   // WEIGHT PROGRESS
-  let lastWeightData = "";
-  let weightBeforeLastWeightData = "";
-  let lastWeightProgress = "";
-  let firstWeightData = "";
-  let lostWeightProgress = "";
+  let lastWeightData = 0;
+  let weightBeforeLastWeightData = 0;
+  let lastWeightProgress = 0;
+  let firstWeightData = 0;
+  let lostWeightProgress = 0;
 
   if (props.weightData.length >= 2) {
     // LAST WEIGHT PROGRESS
     lastWeightData = props.weightData[props.weightData.length -1].weight;
     weightBeforeLastWeightData = props.weightData[props.weightData.length -2].weight;
-    lastWeightProgress = weightBeforeLastWeightData - lastWeightData + " KG";
+    lastWeightProgress = Number(weightBeforeLastWeightData - lastWeightData).toFixed(1) + " KG";
+
     // OVERALL WEIGHT PROGRESS
     firstWeightData = props.weightData[0].weight;
     lastWeightData = props.weightData[props.weightData.length -1].weight;
-    lostWeightProgress = firstWeightData - lastWeightData + " KG";
+    lostWeightProgress = Number(firstWeightData - lastWeightData).toFixed(1) + " KG";
   }
+
+  
 
   return (
     isAuthenticated && (

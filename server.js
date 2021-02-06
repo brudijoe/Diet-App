@@ -37,7 +37,7 @@ const dietSchema = new mongoose.Schema(
       type: String
     },
     weight: {
-      type: String,
+      type: Number,
       required: [true, "Bitte Gewicht angeben"],
       minlength: 1,
       maxlength: 3,

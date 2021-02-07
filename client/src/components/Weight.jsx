@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-
 function Weight(props) {
   const { user, isAuthenticated } = useAuth0();
 
   // DUMMY DATA TO PREVENT CRASHES
-  const dummyData = [
-    {userID: "", weight: 0, date: ""}
-  ]
+  const dummyData = [{ userID: "", weight: 0, date: "" }];
 
   // TODO STATE FÜR WEIGHT-OBJEKT ANLEGEN
   const [currentWeight, setCurrentWeight] = useState(dummyData);
   // DUMMY Data aus dem ARRAY rauskriegen
-  if(currentWeight.length === 2 && currentWeight[0].userID === "") {
+  if (currentWeight.length === 2 && currentWeight[0].userID === "") {
     const currentStateCopy = [...setCurrentWeight];
     currentStateCopy.shift();
     setCurrentWeight(currentStateCopy);
@@ -26,12 +23,11 @@ function Weight(props) {
     day = "0" + day;
   }
   let month = today.getMonth() + 1;
-  if(month < 10) {
+  if (month < 10) {
     month = "0" + month;
   }
   const year = today.getFullYear();
   const currentDate = day + "." + month + "." + year;
-  
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -40,7 +36,7 @@ function Weight(props) {
     setCurrentWeight({
       userID: user.sub,
       weight: "",
-      date: currentDate 
+      date: currentDate,
     });
 
     setCurrentWeight((prevWeight) => {
@@ -48,7 +44,7 @@ function Weight(props) {
       return {
         userID: user.sub,
         ...prevWeight,
-        [name]: value
+        [name]: value,
       };
     });
   }
@@ -59,7 +55,7 @@ function Weight(props) {
     setCurrentWeight({
       userID: user.sub,
       weight: "",
-      date: currentDate
+      date: currentDate,
     });
     event.preventDefault();
   }
@@ -73,59 +69,81 @@ function Weight(props) {
 
   if (props.weightData.length >= 2) {
     // LAST WEIGHT PROGRESS
-    lastWeightData = props.weightData[props.weightData.length -1].weight;
-    weightBeforeLastWeightData = props.weightData[props.weightData.length -2].weight;
-    lastWeightProgress = Number(weightBeforeLastWeightData - lastWeightData).toFixed(1) + " KG";
+    lastWeightData = props.weightData[props.weightData.length - 1].weight;
+    weightBeforeLastWeightData =
+      props.weightData[props.weightData.length - 2].weight;
+    lastWeightProgress = Number(
+      weightBeforeLastWeightData - lastWeightData
+    ).toFixed(1);
+    if (lastWeightProgress < 0) {
+      lastWeightProgress = -1 * lastWeightProgress + " KG zugenommen.";
+    } else {
+      lastWeightProgress = lastWeightProgress + " KG abgenommen";
+    }
 
     // OVERALL WEIGHT PROGRESS
     firstWeightData = props.weightData[0].weight;
-    lastWeightData = props.weightData[props.weightData.length -1].weight;
-    lostWeightProgress = Number(firstWeightData - lastWeightData).toFixed(1) + " KG";
+    lastWeightData = props.weightData[props.weightData.length - 1].weight;
+    lostWeightProgress = Number(firstWeightData - lastWeightData).toFixed(1);
+    if (lostWeightProgress < 0) {
+      lostWeightProgress = -1 * lostWeightProgress + " KG zugenommen.";
+    } else {
+      lostWeightProgress = lostWeightProgress + " KG abgenommen";
+    }
   }
-
-  
 
   return (
     isAuthenticated && (
-      <div className="top-container">
-          <form>
-          <div className="form-group">
-            <label>Datum: </label>
-            <input type="text" className="form-control" name="date" value={currentDate} onChange={handleChange} readOnly />
-          </div>
+      <div className="weight-container">
+        <form>
+          <label>Datum: </label>
+          <input
+            type="text"
+            className="form-control"
+            name="date"
+            value={currentDate}
+            onChange={handleChange}
+            readOnly
+          />
 
-          <div className="form-group">
-            <label>Momentanes Gewicht in KG: </label>
-            <input
-              type="number"
-              className="form-control"
-              name="weight"
-              min="1"
-              max="999"
-              minLength="1"
-              maxLength="3"
-              value={currentWeight.weight}
-              onChange={handleChange}
-            />
-            <small id="emailHelp" className="form-text text-muted">Wöchentlich wiegen</small>
-          </div>
+          <label>Aktuelles Gewicht in KG: </label>
+          <input
+            type="number"
+            className="form-control"
+            name="weight"
+            min="1"
+            max="999"
+            minLength="1"
+            maxLength="3"
+            value={currentWeight.weight}
+            onChange={handleChange}
+          />
 
-          <div className="form-group">
-            <label>Gewichtsdifferenz seit letzter Woche: </label>
-            <input type="text" className="form-control" name="lastWeightProgress" value={lastWeightProgress} readOnly />
-          </div>
+          <label>Gewicht seit letzter Woche: </label>
+          <input
+            type="text"
+            className="form-control"
+            name="lastWeightProgress"
+            value={lastWeightProgress}
+            readOnly
+          />
 
-          <div className="form-group">
-            <label>Gesamtdifferenz: </label>
-            <input type="text" className="form-control" name="lostWeightProgress" value={lostWeightProgress} readOnly />
-          </div>
-            <button id="submitweightbutton" onClick={submitWeight}>
-                        Bestätigen
-            </button>
-          </form>
+          <label>Gesamtfortschritt: </label>
+          <input
+            type="text"
+            className="form-control"
+            name="lostWeightProgress"
+            value={lostWeightProgress}
+            readOnly
+          />
+
+          <button id="submitweightbutton" onClick={submitWeight}>
+            <span>Absenden</span>
+          </button>
+        </form>
       </div>
     )
-  )
+  );
 }
 
 export default Weight;

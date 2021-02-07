@@ -5,32 +5,38 @@ import Header from "./Header";
 import Footer from "./Footer";
 import logo from "../images/Diet-App-Logo.png";
 // AUTH0
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0 } from "@auth0/auth0-react";
 // CHART
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 function App(props) {
-
   // AUTH
   const { user, isAuthenticated, isLoading } = useAuth0();
   // STATE IS USER LOGGED IN
   const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 
   // DUMMY DATA TO PREVENT CRASHES
-  const dummyData = [
-    {userID: "", weight: 0, date: ""}
-  ]
+  const dummyData = [{ userID: "", weight: 0, date: "" }];
 
   // STATE FOR WEIGHT-DATA
   const [weightData, setWeightData] = useState(dummyData);
   console.log(weightData);
   // DUMMY Data aus dem ARRAY rauskriegen
-  if(weightData.length === 2 && weightData[0].weight === "") {
+  if (weightData.length === 2 && weightData[0].weight === "") {
     const currentStateCopy = [...weightData];
     currentStateCopy.shift();
     setWeightData(currentStateCopy);
   }
-  
+
   // GET WEIGHTDATA
   // PROBLEM user.sub ist unbekannt beim laden
   // useEffect(() => {
@@ -39,26 +45,26 @@ function App(props) {
   //     .then((res) => setWeightData(res.data))
   //     .catch((err) => console.log(err));
   // },[]);
-  
+
   // ANDERE LÖSUNG
-  if(!userIsLoggedIn && isAuthenticated) {
+  if (!userIsLoggedIn && isAuthenticated) {
     axios
-    .get("/api/weightData/"+user.sub)
-    .then((res) => setWeightData(res.data))
-    .catch((err) => console.log(err));
+      .get("/api/weightData/" + user.sub)
+      .then((res) => setWeightData(res.data))
+      .catch((err) => console.log(err));
     setUserIsLoggedIn(true);
   }
 
   // ADD WEIGHT
   function addWeight(newWeight) {
     axios
-    .post("/api/weightData/"+user.sub, newWeight)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .post("/api/weightData/" + user.sub, newWeight)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     setWeightData((prevWeightData) => {
       return [...prevWeightData, newWeight];
@@ -71,8 +77,11 @@ function App(props) {
   // ICH BRAUCHE IMMER DEN LETZTEN INDEX UND DEN DAVOR
   let stroke = ["#00af91"];
   if (weightData.length >= 2) {
-    if (weightData[weightData.length -2].weight > weightData[weightData.length -1].weight) {
-      stroke = ["#00af91"]
+    if (
+      weightData[weightData.length - 2].weight >
+      weightData[weightData.length - 1].weight
+    ) {
+      stroke = ["#00af91"];
     } else {
       stroke = ["#f58634"];
     }
@@ -88,33 +97,35 @@ function App(props) {
   } else {
     return (
       <div className="root-container">
-
-      <Header />
-      <Weight onAdd={addWeight} weightData={weightData} />
-
-      {isAuthenticated && (
-        <div className="chart-container">
-          <ResponsiveContainer width="95%" height={400}>
-            <LineChart data={weightData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-              <Line name="Gewicht[KG]" type="monotone" dataKey="weight" stroke={stroke} strokeWidth="2
-              " />
-              <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <Legend verticalAlign="top" height={36}/>
-              <XAxis dataKey="date" />
-              <YAxis dataKey="weight"/>
-              <Tooltip />
-            </LineChart>
-          </ResponsiveContainer>
-        </div> 
-      )}  
-        {/* <Profile /> */}
-      <Footer />
-
+        <Header />
+        <Weight onAdd={addWeight} weightData={weightData} />
+        {isAuthenticated && (
+          <div className="chart-container">
+            <ResponsiveContainer width="95%" height={400}>
+              <LineChart
+                data={weightData}
+                margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+              >
+                <Line
+                  name="Gewicht[KG]"
+                  type="monotone"
+                  dataKey="weight"
+                  stroke={stroke}
+                  strokeWidth="2"
+                />
+                <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+                <Legend verticalAlign="top" height={36} />
+                <XAxis dataKey="date" />
+                <YAxis dataKey="weight" />
+                <Tooltip />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+        <Footer />
       </div>
     );
   }
-
-
 }
 
 export default App;

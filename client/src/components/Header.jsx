@@ -8,6 +8,7 @@ function Header() {
 
     return (
         <header>
+            <h1>Diet-App</h1>
             <img src={logo} alt="Logo"></img>
             
             {!isAuthenticated && (

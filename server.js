@@ -47,7 +47,7 @@ const dietSchema = new mongoose.Schema(
     date: {
       type: String,
       //Unique damit nur max einmal am Tag wiegen
-      //unique: true
+      unique: true
     },
   },
   { collection: "weightData" }
@@ -71,7 +71,8 @@ app.get("/api/weightData/:userID", (req, res) => {
 // ROUTE TO ADD WEIGHT
 app.post("/api/weightData/:userID", (req, res) => {
   const newWeight = new Weight(req.body);
-  console.log("Neues Gewicht(server.js): " + newWeight);
+  // Nur in Development ausgeben
+  // console.log("Neues Gewicht(server.js): " + newWeight);
 
   newWeight.save((err) => {
     if (err) {

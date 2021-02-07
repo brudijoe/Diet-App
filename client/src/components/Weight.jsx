@@ -40,7 +40,8 @@ function Weight(props) {
     });
 
     setCurrentWeight((prevWeight) => {
-      console.log(prevWeight);
+      // Nur in Development ausgeben 
+      // console.log(prevWeight);
       return {
         userID: user.sub,
         ...prevWeight,
@@ -106,7 +107,7 @@ function Weight(props) {
             readOnly
           />
 
-          <label>Aktuelles Gewicht in KG: </label>
+          <label>Tägliches/Wöchentliches Gewicht in KG: </label>
           <input
             type="number"
             className="form-control"

@@ -24,12 +24,13 @@ function App(props) {
   // STATE IS USER LOGGED IN
   const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 
-  // DUMMY DATA TO PREVENT CRASHES
+  // STATE WEIGHT-DATA
   const dummyData = [{ userID: "", weight: 0, date: "" }];
-
-  // STATE FOR WEIGHT-DATA
   const [weightData, setWeightData] = useState(dummyData);
-  console.log(weightData);
+
+  // Nur in Development ausgeben 
+  // console.log(weightData);
+
   // DUMMY Data aus dem ARRAY rauskriegen
   if (weightData.length === 2 && weightData[0].weight === "") {
     const currentStateCopy = [...weightData];
@@ -89,7 +90,8 @@ function App(props) {
 
   if (isLoading) {
     return (
-      <div>
+      <div className="header">
+        <h1>Diet-App</h1>
         <img id="animatedlogo" src={logo} alt="Logo"></img>
         <h4>Loading...</h4>
       </div>

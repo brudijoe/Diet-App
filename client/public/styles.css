@@ -71,6 +71,10 @@ input:read-only {
     background-color: #eeeeee;
 }
 
+h1 {
+    margin: 0;
+}
+
 h4 {
     color: white;
 }
@@ -111,6 +115,14 @@ h4 {
 
 .login-container {
     margin: 0 auto;
+}
+
+.header {
+    grid-area: header;
+    display: grid;
+    color: white;
+    margin: 0 auto;
+    padding: 0.5rem;
 }
 
 /*IDs*/

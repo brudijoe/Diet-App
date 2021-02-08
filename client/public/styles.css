@@ -22,7 +22,7 @@ header {
 
 button {
     display: inline-block;
-    background-color: #00838f;
+    background-color: #005662;
     width: 12rem;
     height: 3rem;
     color: white;
@@ -48,9 +48,38 @@ footer {
     padding: 0.5rem;
 }
 
-form{
+form {
     color:white;
     text-align: left;
+    margin: 1rem;
+    margin-right: 0.5rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 0.25rem;
+}
+
+table td {
+    width: 50%;
+    padding: 0.5rem;
+}
+
+caption {
+    margin-top: 0.5rem;
+}
+
+table tr:nth-child(odd) {
+    background-color: #37474f;
+}
+
+table tr:nth-child(even) {
+    background-color: #62727b;
+}
+
+table tr:hover {
+    background-color: #90a0aa;
 }
 
 label {
@@ -59,16 +88,17 @@ label {
 }
 
 input {
-    display: block;
+    display: inline-block;
     box-sizing: border-box;
     width: 100%;
-    margin-bottom: 1rem;
     padding: 0.375rem 0.75rem;
-    border-radius: 0.25rem;
+    border: 1px solid white;
+    margin-bottom: 1.5rem;
 }
 
 input:read-only {
-    background-color: #eeeeee;
+    background-color: #102027;
+    color: white;
 }
 
 h1 {
@@ -81,41 +111,6 @@ h4 {
 
 
 /*CLASSES*/
-.root-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr ;
-    grid-template-rows: 1fr 2fr 2fr 0.25fr;
-    grid-template-areas: 
-        "header header"
-        "weight-container chart-container"
-        "weight-container chart-container"
-        "footer footer";
-    height: 100vh;
-}
-
-.weight-container {
-    background-color: #102027;
-    border-collapse: collapse;
-    grid-area: weight-container;
-    display: grid;
-    padding: 1rem;
-}
-
-.chart-container {
-    background-color: #102027;
-    border-collapse: collapse;
-    grid-area: chart-container;
-    display: grid;
-    padding: 1rem;
-}
-
-.loginscreen {
-    text-align: center;
-}
-
-.login-container {
-    margin: 0 auto;
-}
 
 .header {
     grid-area: header;
@@ -125,6 +120,64 @@ h4 {
     padding: 0.5rem;
 }
 
+.root-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr ;
+    grid-template-rows: 1fr 2fr 2fr 0.25fr;
+    grid-template-areas: 
+        "header header"
+        "input-container chart-container"
+        "table-container chart-container"
+        "footer footer";
+    height: 100vh;
+}
+
+.input-container {
+    background-color: #102027;
+    border-collapse: collapse;
+    grid-area: input-container;
+    display: grid;
+    padding: 1rem;
+    border: 0.063rem solid white;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.input-container {
+    border: 0.063rem solid white;
+    background-color: #102027;
+    padding: 1rem;
+}
+
+.input-container label {
+    padding: 0.5rem;
+    display: block;
+    margin: 0;
+}
+
+.table-container {
+    background-color: #102027;
+    border-collapse: collapse;
+    grid-area: table-container;
+    display: grid;
+    padding: 1rem;
+    border: 0.063rem solid white;
+    border-radius: 0.25rem;
+    margin-top: 1rem;
+}
+
+.chart-container {
+    background-color: #102027;
+    border-collapse: collapse;
+    grid-area: chart-container;
+    display: grid;
+    border: 0.063rem solid white;
+    border-radius: 0.25rem;
+    margin: 1rem;
+    margin-left: 0.5rem;
+    padding: 1rem;
+}
+
 /*IDs*/
 
 #animatedlogo{
@@ -132,9 +185,13 @@ h4 {
     animation-duration: 0.5s;
 }
 
+/*SUBMITWEIGHTBUTTON*/
+
 #submitweightbutton {
     display: block;
-    background-color: #005662;
+    width: 100%;
+    background-color: #00838f;
+    border-radius: 0.25rem;
 }
 
 #submitweightbutton:hover {
@@ -148,10 +205,10 @@ h4 {
     transition: 0.5s;
 }
 
-/*PSEUDO SUBMITBUTTON */
+/*SUBMITWEIGHTBUTTON PSEUDO*/
 
 #submitweightbutton span:after {
-    content: '\02713';
+    content: '\02714';
     position: absolute;
     opacity: 0;
     top: 0;
@@ -168,6 +225,44 @@ h4 {
     right: 0;
 }
 
+/*DATE*/
+
+#labeldate{
+    background-color: #37474f;
+    border-radius: 0.25rem 0.25rem 0 0;
+}
+
+#labeldatevalue {
+    background-color: #62727b;
+}
+
+/*INPUT*/
+
+#labelweight {
+    background-color: #37474f;
+}
+
+#inputweight{
+    border-radius: 0 0 0.25rem 0.25rem;
+}
+
+/*TABLE*/
+
+#table-top-left {
+    border-radius: 0.25rem 0 0 0;
+}
+
+#table-top-right {
+    border-radius: 0 0.25rem 0 0;
+}
+
+#table-bottom-left {
+    border-radius: 0 0 0 0.25rem;
+}
+
+#table-bottom-right {
+    border-radius: 0 0 0.25rem 0;
+}
 
 /*ANIMATIONS*/
 

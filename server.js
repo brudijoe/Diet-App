@@ -47,7 +47,7 @@ const dietSchema = new mongoose.Schema(
     date: {
       type: String,
       //Unique damit nur max einmal am Tag wiegen
-      unique: true
+      //unique: true
     },
   },
   { collection: "weightData" }

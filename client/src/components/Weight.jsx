@@ -40,7 +40,7 @@ function Weight(props) {
     });
 
     setCurrentWeight((prevWeight) => {
-      // Nur in Development ausgeben 
+      // Nur in Development ausgeben
       // console.log(prevWeight);
       return {
         userID: user.sub,
@@ -95,21 +95,22 @@ function Weight(props) {
 
   return (
     isAuthenticated && (
-      <div className="weight-container">
-        <form>
-          <label>Datum: </label>
-          <input
-            type="text"
+      <form>
+        <div className="input-container">
+          <label id="labeldate">Datum: </label>
+          <label
+            id="labeldatevalue"
             className="form-control"
             name="date"
-            value={currentDate}
             onChange={handleChange}
-            readOnly
-          />
+          >
+            {currentDate}
+          </label>
 
-          <label>Tägliches/Wöchentliches Gewicht in KG: </label>
+          <label id="labelweight">Aktuelles Gewicht in KG eingeben: </label>
           <input
             type="number"
+            id="inputweight"
             className="form-control"
             name="weight"
             min="1"
@@ -119,30 +120,38 @@ function Weight(props) {
             value={currentWeight.weight}
             onChange={handleChange}
           />
-
-          <label>Gewicht seit letzter Woche: </label>
-          <input
-            type="text"
-            className="form-control"
-            name="lastWeightProgress"
-            value={lastWeightProgress}
-            readOnly
-          />
-
-          <label>Gesamtfortschritt: </label>
-          <input
-            type="text"
-            className="form-control"
-            name="lostWeightProgress"
-            value={lostWeightProgress}
-            readOnly
-          />
-
           <button id="submitweightbutton" onClick={submitWeight}>
             <span>Absenden</span>
           </button>
-        </form>
-      </div>
+        </div>
+
+        <div className="table-container">
+          <table>
+            <tbody>
+              <tr>
+                <td id="table-top-left">Gesamt:</td>
+                <td id="table-top-right">{lostWeightProgress}</td>
+              </tr>
+              <tr>
+                <td>Jahr:</td>
+                <td>5 KG</td>
+              </tr>
+              <tr>
+                <td>Monat:</td>
+                <td>5 KG</td>
+              </tr>
+              <tr>
+                <td>Woche:</td>
+                <td>5 KG</td>
+              </tr>
+              <tr>
+                <td id="table-bottom-left">Aktuell:</td>
+                <td id="table-bottom-right">5 KG</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
     )
   );
 }

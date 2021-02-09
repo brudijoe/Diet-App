@@ -18,16 +18,12 @@ function Weight(props) {
 
   // Datum für label
   const today = new Date();
-  let day = today.getDate();
-  if (day < 10) {
-    day = "0" + day;
+  const dateOptions = {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
   }
-  let month = today.getMonth() + 1;
-  if (month < 10) {
-    month = "0" + month;
-  }
-  const year = today.getFullYear();
-  const currentDate = day + "." + month + "." + year;
+  const currentDate = today.toLocaleDateString("de-DE", dateOptions);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -62,35 +58,63 @@ function Weight(props) {
   }
 
   // WEIGHT PROGRESS
-  let lastWeightData = 0;
-  let weightBeforeLastWeightData = 0;
-  let lastWeightProgress = 0;
-  let firstWeightData = 0;
-  let lostWeightProgress = 0;
+  let progressOverall = 0;
+  let progressYear = 0;
+  let progressMonth = 0;
+  let progressWeek = 0;
+  let progressNow = 0;
 
   if (props.weightData.length >= 2) {
-    // LAST WEIGHT PROGRESS
-    lastWeightData = props.weightData[props.weightData.length - 1].weight;
-    weightBeforeLastWeightData =
-      props.weightData[props.weightData.length - 2].weight;
-    lastWeightProgress = Number(
-      weightBeforeLastWeightData - lastWeightData
-    ).toFixed(1);
-    if (lastWeightProgress < 0) {
-      lastWeightProgress = -1 * lastWeightProgress + " KG zugenommen.";
+    // TODO PROGRESS OVERALL
+    let firstEntryProgressOverall = props.weightData[0].weight;
+    let lastEntryProgressOverall = props.weightData[props.weightData.length - 1].weight;
+    progressOverall = Number(firstEntryProgressOverall - lastEntryProgressOverall).toFixed(1);
+    if (progressOverall < 0) {
+      progressOverall = -1 * progressOverall + " KG zugenommen.";
     } else {
-      lastWeightProgress = lastWeightProgress + " KG abgenommen";
+      progressOverall = progressOverall + " KG abgenommen";
     }
+    // TODO PROGRESS YEAR
+    const currentYear = today.toLocaleDateString("de-DE", {year:"numeric"});;
+    const currentYearPattern = new RegExp("\\b"+currentYear+"\\b");
+    let progressYearArray = props.weightData.filter(arrayEntry => currentYearPattern.test(arrayEntry.date));
+    // CALCULATION FIRST ENTRY - LAST ENTRY
+    let firstEntryProgressYear = progressYearArray[0].weight;
+    let lastEntryProgressYear = progressYearArray[progressYearArray.length - 1].weight;
+    progressYear = Number(firstEntryProgressYear - lastEntryProgressYear).toFixed(1);
+    if (progressYear < 0) {
+      progressYear = -1 * progressYear + " KG zugenommen.";
+    } else {
+      progressYear = progressYear + " KG abgenommen";
+    }
+    // TODO PROGRESS MONTH
+    const currentMonth = today.toLocaleDateString("de-DE", {month:"long"});;
+    const currentMonthPattern = new RegExp("\\b"+currentMonth+"\\b");
+    let progressMonthArray = props.weightData.filter(arrayEntry => currentMonthPattern.test(arrayEntry.date));
+    // CALCULATION FIRST ENTRY - LAST ENTRY
+    let firstEntryProgressMonth = progressMonthArray[0].weight;
+    let lastEntryProgressMonth = progressMonthArray[progressMonthArray.length - 1].weight;
+    progressMonth = Number(firstEntryProgressMonth - lastEntryProgressMonth).toFixed(1);
+    if (progressMonth < 0) {
+      progressMonth = -1 * progressMonth + " KG zugenommen.";
+    } else {
+      progressMonth = progressMonth + " KG abgenommen";
+    }
+    // TODO PROGRESS WEEK
 
-    // OVERALL WEIGHT PROGRESS
-    firstWeightData = props.weightData[0].weight;
-    lastWeightData = props.weightData[props.weightData.length - 1].weight;
-    lostWeightProgress = Number(firstWeightData - lastWeightData).toFixed(1);
-    if (lostWeightProgress < 0) {
-      lostWeightProgress = -1 * lostWeightProgress + " KG zugenommen.";
+    // TODO CURRENT PROGRESS
+    let lastEntryProgressNow = props.weightData[props.weightData.length - 1].weight;
+    let beforeLastEntryProgressNow =
+      props.weightData[props.weightData.length - 2].weight;
+    progressNow = Number(
+      beforeLastEntryProgressNow - lastEntryProgressNow
+    ).toFixed(1);
+    if (progressNow < 0) {
+      progressNow = -1 * progressNow + " KG zugenommen.";
     } else {
-      lostWeightProgress = lostWeightProgress + " KG abgenommen";
+      progressNow = progressNow + " KG abgenommen";
     }
+    
   }
 
   return (
@@ -130,15 +154,15 @@ function Weight(props) {
             <tbody>
               <tr>
                 <td id="table-top-left">Gesamt:</td>
-                <td id="table-top-right">{lostWeightProgress}</td>
+                <td id="table-top-right">{progressOverall}</td>
               </tr>
               <tr>
                 <td>Jahr:</td>
-                <td>5 KG</td>
+                <td>{progressYear}</td>
               </tr>
               <tr>
                 <td>Monat:</td>
-                <td>5 KG</td>
+                <td>{progressMonth}</td>
               </tr>
               <tr>
                 <td>Woche:</td>
@@ -146,7 +170,7 @@ function Weight(props) {
               </tr>
               <tr>
                 <td id="table-bottom-left">Aktuell:</td>
-                <td id="table-bottom-right">5 KG</td>
+                <td id="table-bottom-right">{progressNow}</td>
               </tr>
             </tbody>
           </table>

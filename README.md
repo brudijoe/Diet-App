@@ -7,7 +7,6 @@
 * Express(.js) - Node.js web framework
 * React(.js) - Client-side JavaScript framework
 * Node(.js) - JavaScript web server 
-* Bootstrap - CSS Framework
 * Recharts - Chart Library
 * Auth0 - Authorization/Authentication platform
 

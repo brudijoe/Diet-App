@@ -1,54 +1,46 @@
 import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-
 function Weight(props) {
   const { user, isAuthenticated } = useAuth0();
 
   // DUMMY DATA TO PREVENT CRASHES
-  const dummyData = [
-    {userID: "", weight: "", date: ""}
-  ]
+  const dummyData = [{ userID: "", weight: 0, date: "" }];
 
-  // TODO STATE FÜR WEIGHT-OBJEKT ANLEGEN
+  // STATE FOR WEIGHT OBJECT
   const [currentWeight, setCurrentWeight] = useState(dummyData);
-  // DUMMY Data aus dem ARRAY rauskriegen
-  if(currentWeight.length === 2 && currentWeight[0].userID === "") {
+  // REMOVE DUMMY DATA FROM ARRAY
+  if (currentWeight.length === 2 && currentWeight[0].userID === "") {
     const currentStateCopy = [...setCurrentWeight];
     currentStateCopy.shift();
     setCurrentWeight(currentStateCopy);
   }
 
-  // Datum für label
+  // DATE
   const today = new Date();
-  let day = today.getDate();
-  if (day < 10) {
-    day = "0" + day;
+  const dateOptions = {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
   }
-  let month = today.getMonth() + 1;
-  if(month < 10) {
-    month = "0" + month;
-  }
-  const year = today.getFullYear();
-  const currentDate = day + "." + month + "." + year;
-  
+  let currentDate = today.toLocaleDateString("de-DE", dateOptions);
+  let currentMonth = today.toLocaleDateString("de-DE", {month:"long"});
+  let currentYear = today.toLocaleDateString("de-DE", {year:"numeric"});
 
   function handleChange(event) {
     const { name, value } = event.target;
-
-    // BEST PRACTICE?
+    // TODO CHECK FOR IMPROVEMENTS
     setCurrentWeight({
       userID: user.sub,
       weight: "",
-      date: currentDate 
+      date: currentDate,
     });
 
     setCurrentWeight((prevWeight) => {
-      console.log(prevWeight);
       return {
         userID: user.sub,
         ...prevWeight,
-        [name]: value
+        [name]: value,
       };
     });
   }
@@ -59,70 +51,219 @@ function Weight(props) {
     setCurrentWeight({
       userID: user.sub,
       weight: "",
-      date: currentDate
+      date: currentDate,
     });
     event.preventDefault();
   }
 
   // WEIGHT PROGRESS
-  let lastWeightData = "";
-  let weightBeforeLastWeightData = "";
-  let lastWeightProgress = "";
-  let firstWeightData = "";
-  let lostWeightProgress = "";
+  let progressOverall = 0;
+  let progressYear = 0;
+  let progressMonth = 0;
+  let progressWeek = 0;
+  let progressCurrent = 0;
 
   if (props.weightData.length >= 2) {
-    // LAST WEIGHT PROGRESS
-    lastWeightData = props.weightData[props.weightData.length -1].weight;
-    weightBeforeLastWeightData = props.weightData[props.weightData.length -2].weight;
-    lastWeightProgress = weightBeforeLastWeightData - lastWeightData + " KG";
-    // OVERALL WEIGHT PROGRESS
-    firstWeightData = props.weightData[0].weight;
-    lastWeightData = props.weightData[props.weightData.length -1].weight;
-    lostWeightProgress = firstWeightData - lastWeightData + " KG";
+
+    // PROGRESS OVERALL
+    let firstEntryProgressOverall = props.weightData[0].weight;
+    let lastEntryProgressOverall = props.weightData[props.weightData.length - 1].weight;
+    // CALCULATION FIRST ENTRY - LAST ENTRY
+    progressOverall = Number(firstEntryProgressOverall - lastEntryProgressOverall).toFixed(1);
+    if (progressOverall < 0) {
+      progressOverall = -1 * progressOverall + " KG zugenommen.";
+    } else {
+      progressOverall = progressOverall + " KG abgenommen.";
+    }
+
+    // PROGRESS YEAR
+    const currentYearPattern = new RegExp("\\b"+currentYear+"\\b");
+    let progressYearArray = props.weightData.filter(arrayEntry => currentYearPattern.test(arrayEntry.date));
+    // CALCULATION FIRST YEAR ENTRY - LAST YEAR ENTRY
+    let firstEntryProgressYear = progressYearArray[0].weight;
+    let lastEntryProgressYear = progressYearArray[progressYearArray.length - 1].weight;
+    progressYear = Number(firstEntryProgressYear - lastEntryProgressYear).toFixed(1);
+    if (progressYear < 0) {
+      progressYear = -1 * progressYear + " KG zugenommen.";
+    } else {
+      progressYear = progressYear + " KG abgenommen.";
+    }
+
+    // PROGRESS MONTH
+    const currentMonthPattern = new RegExp("\\b"+currentMonth+"\\b");
+    let progressMonthArray = progressYearArray.filter(arrayEntry => currentMonthPattern.test(arrayEntry.date));
+    // CALCULATION FIRST MONTH ENTRY - LAST MONTH ENTRY
+    let firstEntryProgressMonth = progressMonthArray[0].weight;
+    let lastEntryProgressMonth = progressMonthArray[progressMonthArray.length - 1].weight;
+    progressMonth = Number(firstEntryProgressMonth - lastEntryProgressMonth).toFixed(1);
+    if (progressMonth < 0) {
+      progressMonth = -1 * progressMonth + " KG zugenommen.";
+    } else {
+      progressMonth = progressMonth + " KG abgenommen.";
+    }
+
+    // TODO PROGRESS WEEK
+    let progressMonthArrayCopy = progressMonthArray;
+    progressMonthArrayCopy.reverse();
+    let progressWeekArrayLength = 7;
+    let progressWeekArray = [];
+
+    // CODE OPTIMIZATION: progressMonthArrayCopy can have up to 31 entries, so it should be capped at 7 for a week
+    // CODE OPTIMIZATION: First 49 iterations
+    // CODE OPTIMIZATION: Second 43 iterations with break statement
+    // CODE OPTIMIZATION: Third 25 iterations with index2Increment
+    let index2Increment = 0;
+    if(progressMonthArrayCopy.length >= 7) {
+
+      for (let index = 0; index < progressWeekArrayLength; index++) {
+
+        for (let index2 = 0 + index2Increment; index2 < progressWeekArrayLength; index2++) {
+
+          let today = new Date();
+          function addDays(today, days) {
+            let copyToday = new Date(Number(today));
+            copyToday.setDate(today.getDate() + days);
+            return copyToday;
+          }
+          let newDate = addDays(today, - Number(index2));
+          const dateOptions = {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+          }
+          let testDate = newDate.toLocaleDateString("de-DE", dateOptions);
+
+          if(progressMonthArrayCopy[index].date === testDate) {
+            progressWeekArray.push(progressMonthArrayCopy[index]);
+            index2Increment++;
+            break;
+          }
+          
+        }
+
+      }
+
+    } else {
+
+      for (let index = 0; index < progressMonthArrayCopy.length; index++) {
+
+        for (let index2 = 0 + index2Increment; index2 < progressWeekArrayLength; index2++) {
+
+          let today = new Date();
+          function addDays(today, days) {
+            let copyToday = new Date(Number(today));
+            copyToday.setDate(today.getDate() + days);
+            return copyToday;
+          }
+          let newDate = addDays(today, - Number(index2));
+          const dateOptions = {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+          }
+          let testDate = newDate.toLocaleDateString("de-DE", dateOptions);
+
+          if(progressMonthArrayCopy[index].date === testDate) {
+            progressWeekArray.push(progressMonthArrayCopy[index]);
+            index2Increment++;
+            break;
+          }
+          
+        }
+
+      }
+
+    }
+
+    // REVERSE ARRAY TO GET CORRECT ORDER AGAIN FOR CALCULATION
+    progressWeekArray.reverse();
+
+    let firstEntryProgressWeek = progressWeekArray[0].weight;
+    let lastEntryProgressWeek = progressWeekArray[progressWeekArray.length - 1].weight;
+    progressWeek = Number(firstEntryProgressWeek - lastEntryProgressWeek).toFixed(1);
+    if (progressWeek < 0) {
+      progressWeek = -1 * progressWeek + " KG zugenommen.";
+    } else {
+      progressWeek = progressWeek + " KG abgenommen.";
+    }
+
+    // CURRENT PROGRESS
+    let lastEntryprogressCurrent = props.weightData[props.weightData.length - 1].weight;
+    let beforeLastEntryprogressCurrent =
+      props.weightData[props.weightData.length - 2].weight;
+    // CALCULATION LAST ENTRY - BEFORE LAST ENTRY
+    progressCurrent = Number(
+      beforeLastEntryprogressCurrent - lastEntryprogressCurrent
+    ).toFixed(1);
+    if (progressCurrent < 0) {
+      progressCurrent = -1 * progressCurrent + " KG zugenommen.";
+    } else {
+      progressCurrent = progressCurrent + " KG abgenommen.";
+    }
+
   }
 
   return (
     isAuthenticated && (
-      <div className="top-container">
-          <form>
-          <div className="form-group">
-            <label>Datum: </label>
-            <input type="text" className="form-control" name="date" value={currentDate} onChange={handleChange} readOnly />
-          </div>
+      <form>
+        <div className="input-container">
+          <label id="labeldate">Datum: </label>
+          <label
+            id="labeldatevalue"
+            className="form-control"
+            name="date"
+            onChange={handleChange}
+          >
+            {currentDate}
+          </label>
 
-          <div className="form-group">
-            <label>Momentanes Gewicht in KG: </label>
-            <input
-              type="number"
-              className="form-control"
-              name="weight"
-              min="1"
-              max="999"
-              minLength="1"
-              maxLength="3"
-              value={currentWeight.weight}
-              onChange={handleChange}
-            />
-            <small id="emailHelp" className="form-text text-muted">Wöchentlich wiegen</small>
-          </div>
+          <label id="labelweight">Aktuelles Gewicht in KG eingeben: </label>
+          <input
+            type="number"
+            id="inputweight"
+            className="form-control"
+            name="weight"
+            min="1"
+            max="999"
+            minLength="1"
+            maxLength="3"
+            value={currentWeight.weight}
+            onChange={handleChange}
+          />
+          <button id="submitweightbutton" onClick={submitWeight}>
+            <span>Absenden</span>
+          </button>
+        </div>
 
-          <div className="form-group">
-            <label>Gewichtsdifferenz seit letzter Woche: </label>
-            <input type="text" className="form-control" name="lastWeightProgress" value={lastWeightProgress} readOnly />
-          </div>
-
-          <div className="form-group">
-            <label>Gesamtdifferenz: </label>
-            <input type="text" className="form-control" name="lostWeightProgress" value={lostWeightProgress} readOnly />
-          </div>
-            <button id="submitweightbutton" onClick={submitWeight}>
-                        Bestätigen
-            </button>
-          </form>
-      </div>
+        <div className="table-container">
+          <table>
+            <tbody>
+              <tr>
+                <td id="table-top-left">Gesamtfortschritt:</td>
+                <td id="table-top-right">{progressOverall}</td>
+              </tr>
+              <tr>
+                <td>Jahr {currentYear}:</td>
+                <td>{progressYear}</td>
+              </tr>
+              <tr>
+                <td>Monat {currentMonth}:</td>
+                <td>{progressMonth}</td>
+              </tr>
+              <tr>
+                <td>Woche:</td>
+                <td>{progressWeek}</td>
+              </tr>
+              <tr>
+                <td id="table-bottom-left">Aktuell:</td>
+                <td id="table-bottom-right">{progressCurrent}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
     )
-  )
+  );
 }
 
 export default Weight;

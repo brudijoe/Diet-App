@@ -7,7 +7,7 @@ function Weight(props) {
   // DUMMY DATA TO PREVENT CRASHES
   const dummyData = [{ userID: "", weight: 0, date: "" }];
 
-  // TODO STATE FÜR WEIGHT-OBJEKT ANLEGEN
+  // STATE FOR WEIGHT OBJECT
   const [currentWeight, setCurrentWeight] = useState(dummyData);
   // REMOVE DUMMY DATA FROM ARRAY
   if (currentWeight.length === 2 && currentWeight[0].userID === "") {
@@ -29,7 +29,7 @@ function Weight(props) {
 
   function handleChange(event) {
     const { name, value } = event.target;
-    // BEST PRACTICE?
+    // TODO CHECK FOR IMPROVEMENTS
     setCurrentWeight({
       userID: user.sub,
       weight: "",
@@ -111,7 +111,7 @@ function Weight(props) {
     // CODE OPTIMIZATION: progressMonthArrayCopy can have up to 31 entries, so it should be capped at 7 for a week
     // CODE OPTIMIZATION: First 49 iterations
     // CODE OPTIMIZATION: Second 43 iterations with break statement
-    // CODE OPTIMIZATION: Third 25 iteration with index2Increment
+    // CODE OPTIMIZATION: Third 25 iterations with index2Increment
     let index2Increment = 0;
     if(progressMonthArrayCopy.length >= 7) {
 

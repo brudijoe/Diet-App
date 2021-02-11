@@ -10,15 +10,15 @@ import logo from "../images/Diet-App-Logo.png";
 function App(props) {
   // AUTH0
   const { user, isAuthenticated, isLoading } = useAuth0();
-  
+
   // STATE IS USER LOGGED IN
-  const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
+  const [isUserLoggedIn, setisUserLoggedIn] = useState(false);
 
   // STATE WEIGHT-DATA
   const dummyData = [{ userID: "", weight: 0, date: "" }];
   const [weightData, setWeightData] = useState(dummyData);
 
-  // DUMMY Data aus dem ARRAY rauskriegen
+  // REMOVE DUMMY DATA FROM ARRAY
   if (weightData.length === 2 && weightData[0].weight === "") {
     const currentStateCopy = [...weightData];
     currentStateCopy.shift();
@@ -35,12 +35,12 @@ function App(props) {
   // },[]);
 
   // ANOTHER SOLUTION
-  if (!userIsLoggedIn && isAuthenticated) {
+  if (!isUserLoggedIn && isAuthenticated) {
     axios
       .get("/api/weightData/" + user.sub)
       .then((res) => setWeightData(res.data))
       .catch((err) => console.log(err));
-    setUserIsLoggedIn(true);
+    setisUserLoggedIn(true);
   }
 
   // ADD WEIGHT

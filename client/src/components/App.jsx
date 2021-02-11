@@ -1,25 +1,22 @@
 import React, { useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import Weight from "./Weight";
 import Header from "./Header";
 import Footer from "./Footer";
 import Chart from "./Chart";
 import logo from "../images/Diet-App-Logo.png";
-// AUTH0
-import { useAuth0 } from "@auth0/auth0-react";
 
 function App(props) {
-  // AUTH
+  // AUTH0
   const { user, isAuthenticated, isLoading } = useAuth0();
+  
   // STATE IS USER LOGGED IN
   const [userIsLoggedIn, setUserIsLoggedIn] = useState(false);
 
   // STATE WEIGHT-DATA
   const dummyData = [{ userID: "", weight: 0, date: "" }];
   const [weightData, setWeightData] = useState(dummyData);
-
-  // Nur in Development ausgeben 
-  // console.log(weightData);
 
   // DUMMY Data aus dem ARRAY rauskriegen
   if (weightData.length === 2 && weightData[0].weight === "") {
@@ -37,7 +34,7 @@ function App(props) {
   //     .catch((err) => console.log(err));
   // },[]);
 
-  // ANDERE LÖSUNG
+  // ANOTHER SOLUTION
   if (!userIsLoggedIn && isAuthenticated) {
     axios
       .get("/api/weightData/" + user.sub)

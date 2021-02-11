@@ -30,10 +30,9 @@ mongoose.connect(/*mongoAtlas ||*/ mongoLocal, {
   connectTimeoutMS: 10000,
 });
 
-// Create diet schema
+// CREATE DIET SCHEMA
 const dietSchema = new mongoose.Schema(
   {
-    //TODO Send minlength/maxlength error to frontend
     userID: {
       type: String,
     },
@@ -46,19 +45,18 @@ const dietSchema = new mongoose.Schema(
     },
     date: {
       type: String,
-      //Unique damit nur max einmal am Tag wiegen
-      //unique: true
+      unique: true
     },
   },
   { collection: "weightData" }
 );
 
-// Create single model
+// CREATE SINGLE MODEL
 const Weight = mongoose.model("Weight", dietSchema);
 
 // ROUTE TO GET WEIGHT DATA
 app.get("/api/weightData/:userID", (req, res) => {
-  // HIER die aktuelle USERID benutzen
+  // USE CURRENT USER ID
   Weight.find({ userID: req.params.userID }, function (err, dietDB) {
     if (err) {
       res.status(400).json({ error: err });
@@ -71,8 +69,6 @@ app.get("/api/weightData/:userID", (req, res) => {
 // ROUTE TO ADD WEIGHT
 app.post("/api/weightData/:userID", (req, res) => {
   const newWeight = new Weight(req.body);
-  // Nur in Development ausgeben
-  // console.log("Neues Gewicht(server.js): " + newWeight);
 
   newWeight.save((err) => {
     if (err) {
@@ -83,10 +79,10 @@ app.post("/api/weightData/:userID", (req, res) => {
   });
 });
 
-// production/heroku
+// PRODUCTION/HEROKU
 // Before app.listen, send index.html to client
 if (process.env.NODE_ENV === "production") {
-  // Set static folder
+  
   app.use(express.static("client/build"));
 
   app.get("*", (req, res) => {

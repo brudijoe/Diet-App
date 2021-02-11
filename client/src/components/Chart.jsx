@@ -15,11 +15,9 @@ import {
 import React from "react";
 
 function Chart(props) {
-  // AUTH
+  // AUTH0
   const { isAuthenticated } = useAuth0();
 
-  // WENN INDEX DAVOR GRÖSSER IST ALS DANACH dann FARBE GRÜN SONST ROT
-  // ICH BRAUCHE IMMER DEN LETZTEN INDEX UND DEN DAVOR
   let stroke = ["#00af91"];
   if (props.weightData.length >= 2) {
     if (

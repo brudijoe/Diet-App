@@ -36,6 +36,7 @@ npm run client
 ## **Screenshots:**
 
 **Home/Landing Page**
+![Overview Diet-App](./client/src/images/Home.png?raw=true)
 
 ## TODOs
 

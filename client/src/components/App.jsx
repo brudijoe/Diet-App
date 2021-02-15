@@ -5,7 +5,7 @@ import Weight from "./Weight";
 import Header from "./Header";
 import Footer from "./Footer";
 import Chart from "./Chart";
-import logo from "../images/Diet-App-Logo.png";
+import Loginscreen from "./Loginscreen";
 
 function App(props) {
   // AUTH0
@@ -61,16 +61,17 @@ function App(props) {
 
   if (isLoading) {
     return (
-      <div className="header">
-        <h1>Diet-App</h1>
-        <img id="animatedlogo" src={logo} alt="Logo"></img>
+      <div className="root-container">
+        <Header />
         <h4>Loading...</h4>
+        <Footer />
       </div>
     );
   } else {
     return (
       <div className="root-container">
         <Header />
+        <Loginscreen />
         <Weight onAdd={addWeight} weightData={weightData} />
         <Chart weightData={weightData}/>
         <Footer />

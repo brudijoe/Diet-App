@@ -31,12 +31,12 @@ function Chart(props) {
   }
 
   return (
-    <div className="chart-container">
-      {isAuthenticated && (
-        <ResponsiveContainer width="95%" height={400}>
+    isAuthenticated && (
+      <div className="chart-container">
+        <ResponsiveContainer width="95%" height="95%">
           <LineChart
             data={props.weightData}
-            margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+            margin={{ top: 10, right: 5, bottom: 5, left: 10 }}
           >
             <Line
               name="Gewicht[KG]"
@@ -45,15 +45,15 @@ function Chart(props) {
               stroke={stroke}
               strokeWidth="2"
             />
-            <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+            <CartesianGrid stroke="white" strokeDasharray="5 5" />
             <Legend verticalAlign="top" height={36} />
-            <XAxis dataKey="date" />
-            <YAxis dataKey="weight" domain={["auto", "auto"]} />
+            <XAxis stroke="white" dataKey="date" />
+            <YAxis stroke="white" dataKey="weight" domain={["auto", "auto"]} />
             <Tooltip />
           </LineChart>
         </ResponsiveContainer>
-      )}
-    </div>
+      </div>
+    )
   );
 }
 

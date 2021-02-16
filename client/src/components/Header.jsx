@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
-import logo from "../images/Diet-App-Logo.png";
+import logo from "../images/Diet-App-Header.png";
 
 function Header() {
     //AUTH0
@@ -8,19 +8,23 @@ function Header() {
 
     return (
         <header>
-            <h1>Diet-App</h1>
-            <img src={logo} alt="Logo"></img>
-            
-            {!isAuthenticated && (
-                <button onClick={(userSub) => loginWithRedirect()}>
-                    Anmelden
-                </button>
-            )}
-            {isAuthenticated && (
-                <button onClick={() => logout()}>
-                    Abmelden
-                </button>
-            )}
+
+            <div className="headerheading">
+                <img src={logo} alt="Logo"></img>
+            </div>
+
+            <div className="headerbutton">
+                {!isAuthenticated && (
+                    <button  onClick={(userSub) => loginWithRedirect()}>
+                        Anmelden
+                    </button>
+                )}
+                {isAuthenticated && (
+                    <button onClick={() => logout()}>
+                        Abmelden
+                    </button>
+                )}
+            </div>
         </header>
     )
 }

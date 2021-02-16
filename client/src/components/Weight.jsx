@@ -2,37 +2,52 @@ import React, { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
 function Weight(props) {
+  // AUTH0
   const { user, isAuthenticated } = useAuth0();
 
-  // DUMMY DATA TO PREVENT CRASHES
-  const dummyData = [{ userID: "", weight: 0, date: "" }];
-
   // STATE FOR WEIGHT OBJECT
-  const [currentWeight, setCurrentWeight] = useState(dummyData);
-  // REMOVE DUMMY DATA FROM ARRAY
+  const [currentWeight, setCurrentWeight] = useState({
+    userID: "",
+    weight: 0,
+    date: "",
+  });
+
+  // REMOVE DEFAULT DATA FROM ARRAY
   if (currentWeight.length === 2 && currentWeight[0].userID === "") {
     const currentStateCopy = [...setCurrentWeight];
     currentStateCopy.shift();
     setCurrentWeight(currentStateCopy);
   }
 
+  // STATE FOR SUBMIT BUTTON
+  const [isSubmitted, setisSubmitted] = useState(false);
+  // STEATE FOR FOCUS
+  const [isFocused, setisFocused] = useState(false);
+
   // DATE
   const today = new Date();
   const dateOptions = {
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-  }
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
   let currentDate = today.toLocaleDateString("de-DE", dateOptions);
-  let currentMonth = today.toLocaleDateString("de-DE", {month:"long"});
-  let currentYear = today.toLocaleDateString("de-DE", {year:"numeric"});
+  let currentMonth = today.toLocaleDateString("de-DE", { month: "long" });
+  let currentYear = today.toLocaleDateString("de-DE", { year: "numeric" });
+
+  // FUNCTIONS
+  function handleFocus() {
+    setisFocused(true);
+    currentWeight.weight = "";
+    isFocused ?? setisFocused(false)
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
     // TODO CHECK FOR IMPROVEMENTS
     setCurrentWeight({
       userID: user.sub,
-      weight: "",
+      weight: 0,
       date: currentDate,
     });
 
@@ -40,7 +55,7 @@ function Weight(props) {
       return {
         userID: user.sub,
         ...prevWeight,
-        [name]: value,
+        [name]: value
       };
     });
   }
@@ -50,9 +65,10 @@ function Weight(props) {
     props.onAdd(currentWeight);
     setCurrentWeight({
       userID: user.sub,
-      weight: "",
+      weight: 0,
       date: currentDate,
     });
+    setisSubmitted(true);
     event.preventDefault();
   }
 
@@ -64,12 +80,14 @@ function Weight(props) {
   let progressCurrent = 0;
 
   if (props.weightData.length >= 2) {
-
     // PROGRESS OVERALL
     let firstEntryProgressOverall = props.weightData[0].weight;
-    let lastEntryProgressOverall = props.weightData[props.weightData.length - 1].weight;
+    let lastEntryProgressOverall =
+      props.weightData[props.weightData.length - 1].weight;
     // CALCULATION FIRST ENTRY - LAST ENTRY
-    progressOverall = Number(firstEntryProgressOverall - lastEntryProgressOverall).toFixed(1);
+    progressOverall = Number(
+      firstEntryProgressOverall - lastEntryProgressOverall
+    ).toFixed(1);
     if (progressOverall < 0) {
       progressOverall = -1 * progressOverall + " KG zugenommen.";
     } else {
@@ -77,12 +95,17 @@ function Weight(props) {
     }
 
     // PROGRESS YEAR
-    const currentYearPattern = new RegExp("\\b"+currentYear+"\\b");
-    let progressYearArray = props.weightData.filter(arrayEntry => currentYearPattern.test(arrayEntry.date));
+    const currentYearPattern = new RegExp("\\b" + currentYear + "\\b");
+    let progressYearArray = props.weightData.filter((arrayEntry) =>
+      currentYearPattern.test(arrayEntry.date)
+    );
     // CALCULATION FIRST YEAR ENTRY - LAST YEAR ENTRY
     let firstEntryProgressYear = progressYearArray[0].weight;
-    let lastEntryProgressYear = progressYearArray[progressYearArray.length - 1].weight;
-    progressYear = Number(firstEntryProgressYear - lastEntryProgressYear).toFixed(1);
+    let lastEntryProgressYear =
+      progressYearArray[progressYearArray.length - 1].weight;
+    progressYear = Number(
+      firstEntryProgressYear - lastEntryProgressYear
+    ).toFixed(1);
     if (progressYear < 0) {
       progressYear = -1 * progressYear + " KG zugenommen.";
     } else {
@@ -90,12 +113,17 @@ function Weight(props) {
     }
 
     // PROGRESS MONTH
-    const currentMonthPattern = new RegExp("\\b"+currentMonth+"\\b");
-    let progressMonthArray = progressYearArray.filter(arrayEntry => currentMonthPattern.test(arrayEntry.date));
+    const currentMonthPattern = new RegExp("\\b" + currentMonth + "\\b");
+    let progressMonthArray = progressYearArray.filter((arrayEntry) =>
+      currentMonthPattern.test(arrayEntry.date)
+    );
     // CALCULATION FIRST MONTH ENTRY - LAST MONTH ENTRY
     let firstEntryProgressMonth = progressMonthArray[0].weight;
-    let lastEntryProgressMonth = progressMonthArray[progressMonthArray.length - 1].weight;
-    progressMonth = Number(firstEntryProgressMonth - lastEntryProgressMonth).toFixed(1);
+    let lastEntryProgressMonth =
+      progressMonthArray[progressMonthArray.length - 1].weight;
+    progressMonth = Number(
+      firstEntryProgressMonth - lastEntryProgressMonth
+    ).toFixed(1);
     if (progressMonth < 0) {
       progressMonth = -1 * progressMonth + " KG zugenommen.";
     } else {
@@ -113,74 +141,73 @@ function Weight(props) {
     // CODE OPTIMIZATION: Second 43 iterations with break statement
     // CODE OPTIMIZATION: Third 25 iterations with index2Increment
     let index2Increment = 0;
-    if(progressMonthArrayCopy.length >= 7) {
-
+    if (progressMonthArrayCopy.length >= 7) {
       for (let index = 0; index < progressWeekArrayLength; index++) {
-
-        for (let index2 = 0 + index2Increment; index2 < progressWeekArrayLength; index2++) {
-
+        for (
+          let index2 = 0 + index2Increment;
+          index2 < progressWeekArrayLength;
+          index2++
+        ) {
           let today = new Date();
           function addDays(today, days) {
             let copyToday = new Date(Number(today));
             copyToday.setDate(today.getDate() + days);
             return copyToday;
           }
-          let newDate = addDays(today, - Number(index2));
+          let newDate = addDays(today, -Number(index2));
           const dateOptions = {
             day: "numeric",
             month: "long",
-            year: "numeric"
-          }
+            year: "numeric",
+          };
           let testDate = newDate.toLocaleDateString("de-DE", dateOptions);
 
-          if(progressMonthArrayCopy[index].date === testDate) {
+          if (progressMonthArrayCopy[index].date === testDate) {
             progressWeekArray.push(progressMonthArrayCopy[index]);
             index2Increment++;
             break;
           }
-          
         }
-
       }
-
     } else {
-
       for (let index = 0; index < progressMonthArrayCopy.length; index++) {
-
-        for (let index2 = 0 + index2Increment; index2 < progressWeekArrayLength; index2++) {
-
+        for (
+          let index2 = 0 + index2Increment;
+          index2 < progressWeekArrayLength;
+          index2++
+        ) {
           let today = new Date();
           function addDays(today, days) {
             let copyToday = new Date(Number(today));
             copyToday.setDate(today.getDate() + days);
             return copyToday;
           }
-          let newDate = addDays(today, - Number(index2));
+          let newDate = addDays(today, -Number(index2));
           const dateOptions = {
             day: "numeric",
             month: "long",
-            year: "numeric"
-          }
+            year: "numeric",
+          };
           let testDate = newDate.toLocaleDateString("de-DE", dateOptions);
 
-          if(progressMonthArrayCopy[index].date === testDate) {
+          if (progressMonthArrayCopy[index].date === testDate) {
             progressWeekArray.push(progressMonthArrayCopy[index]);
             index2Increment++;
             break;
           }
-          
         }
-
       }
-
     }
 
     // REVERSE ARRAY TO GET CORRECT ORDER AGAIN FOR CALCULATION
     progressWeekArray.reverse();
 
     let firstEntryProgressWeek = progressWeekArray[0].weight;
-    let lastEntryProgressWeek = progressWeekArray[progressWeekArray.length - 1].weight;
-    progressWeek = Number(firstEntryProgressWeek - lastEntryProgressWeek).toFixed(1);
+    let lastEntryProgressWeek =
+      progressWeekArray[progressWeekArray.length - 1].weight;
+    progressWeek = Number(
+      firstEntryProgressWeek - lastEntryProgressWeek
+    ).toFixed(1);
     if (progressWeek < 0) {
       progressWeek = -1 * progressWeek + " KG zugenommen.";
     } else {
@@ -188,7 +215,8 @@ function Weight(props) {
     }
 
     // CURRENT PROGRESS
-    let lastEntryprogressCurrent = props.weightData[props.weightData.length - 1].weight;
+    let lastEntryprogressCurrent =
+      props.weightData[props.weightData.length - 1].weight;
     let beforeLastEntryprogressCurrent =
       props.weightData[props.weightData.length - 2].weight;
     // CALCULATION LAST ENTRY - BEFORE LAST ENTRY
@@ -200,7 +228,6 @@ function Weight(props) {
     } else {
       progressCurrent = progressCurrent + " KG abgenommen.";
     }
-
   }
 
   return (
@@ -208,28 +235,31 @@ function Weight(props) {
       <form>
         <div className="input-container">
           <label id="labeldate">Datum: </label>
-          <label
-            id="labeldatevalue"
-            className="form-control"
-            name="date"
-            onChange={handleChange}
-          >
+          <label id="labeldatevalue" name="date" onChange={handleChange}>
             {currentDate}
           </label>
 
           <label id="labelweight">Aktuelles Gewicht in KG eingeben: </label>
-          <input
-            type="number"
-            id="inputweight"
-            className="form-control"
-            name="weight"
-            min="1"
-            max="999"
-            minLength="1"
-            maxLength="3"
-            value={currentWeight.weight}
-            onChange={handleChange}
-          />
+
+          {isSubmitted === true && (
+            <label id="labelsubmitted">
+              Bleib dran! Du kannst einmal täglich dein Gewicht eingeben.
+            </label>
+          )}
+          {isSubmitted === false && (
+            <input
+              type="number"
+              id="inputweight"
+              name="weight"
+              min="1"
+              max="999"
+              minLength="1"
+              maxLength="3"
+              value={currentWeight.weight}
+              onChange={handleChange}
+              onFocus={handleFocus}
+            />
+          )}
           <button id="submitweightbutton" onClick={submitWeight}>
             <span>Absenden</span>
           </button>

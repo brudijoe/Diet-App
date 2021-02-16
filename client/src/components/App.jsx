@@ -5,7 +5,7 @@ import Weight from "./Weight";
 import Header from "./Header";
 import Footer from "./Footer";
 import Chart from "./Chart";
-import logo from "../images/Diet-App-Logo.png";
+import Loginscreen from "./Loginscreen";
 
 function App(props) {
   // AUTH0
@@ -15,10 +15,11 @@ function App(props) {
   const [isUserLoggedIn, setisUserLoggedIn] = useState(false);
 
   // STATE WEIGHT-DATA
-  const dummyData = [{ userID: "", weight: 0, date: "" }];
-  const [weightData, setWeightData] = useState(dummyData);
+  const [weightData, setWeightData] = useState([
+    { userID: "", weight: 0, date: "" },
+  ]);
 
-  // REMOVE DUMMY DATA FROM ARRAY
+  // REMOVE DEFAULT DATA FROM ARRAY
   if (weightData.length === 2 && weightData[0].weight === "") {
     const currentStateCopy = [...weightData];
     currentStateCopy.shift();
@@ -61,16 +62,17 @@ function App(props) {
 
   if (isLoading) {
     return (
-      <div className="header">
-        <h1>Diet-App</h1>
-        <img id="animatedlogo" src={logo} alt="Logo"></img>
+      <div className="root-container">
+        <Header />
         <h4>Loading...</h4>
+        <Footer />
       </div>
     );
   } else {
     return (
       <div className="root-container">
         <Header />
+        <Loginscreen />
         <Weight onAdd={addWeight} weightData={weightData} />
         <Chart weightData={weightData}/>
         <Footer />

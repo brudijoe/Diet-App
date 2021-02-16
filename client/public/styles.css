@@ -244,6 +244,7 @@ input:read-only {
 #labeldate{
     background-color: #37474f;
     border-radius: 0.5rem 0.5rem 0 0;
+    font-weight: bold;
 }
 
 #labeldatevalue {
@@ -254,11 +255,18 @@ input:read-only {
 
 #labelweight {
     background-color: #37474f;
+    font-weight: bold;
 }
 
 #inputweight{
     border-radius: 0 0 0.5rem 0.5rem;
-    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+#labelsubmitted {
+    background-color: #37474f;
+    border-radius: 0 0 0.5rem 0.5rem;
+    margin-bottom: 1rem;
 }
 
 /*TABLE*/

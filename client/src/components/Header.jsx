@@ -8,20 +8,19 @@ function Header() {
 
     return (
         <header>
-
             <div className="headerheading">
                 <img src={logo} alt="Logo"></img>
             </div>
 
             <div className="headerbutton">
                 {!isAuthenticated && (
-                    <button  onClick={(userSub) => loginWithRedirect()}>
-                        Anmelden
+                    <button onClick={() => loginWithRedirect()}>
+                        Login
                     </button>
                 )}
                 {isAuthenticated && (
                     <button onClick={() => logout()}>
-                        Abmelden
+                        Logout
                     </button>
                 )}
             </div>

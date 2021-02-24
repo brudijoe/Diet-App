@@ -10,7 +10,7 @@ function Loginscreen() {
         !isAuthenticated && (
             <div className="loginscreen">
                 <h1>Verfolge deine Diäterfolge.</h1>
-                <h2>Demo:</h2>
+                <h3>Demo:</h3>
                 <img src={home} alt="Demo"></img>
             </div>
         )

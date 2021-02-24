@@ -51,6 +51,9 @@ const dietSchema = new mongoose.Schema(
   { collection: "weightData" }
 );
 
+// COMPOUND INDEX
+dietSchema.index({"userID": 1, "date": 1}, {unique: true});
+
 // CREATE SINGLE MODEL
 const Weight = mongoose.model("Weight", dietSchema);
 

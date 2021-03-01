@@ -59,15 +59,24 @@ function Weight(props) {
       };
     });
   }
-
   // SUBMIT WEIGHT
   function submitWeight(event) {
-    props.onAdd(currentWeight);
+    // WENN NICHT HEUTE UND NICHT LEER
+    if (props.weightData[props.weightData.length - 1].date !== currentDate && props.weightData.length < 1) {
+      // WENN GEWICHT NICHT NULL ODER GEWICHT NICHT KLEINER ALS EINS
+      if (
+        currentWeight.weight !== 0 ||
+        currentWeight.weight > 1
+      ) {
+        props.onAdd(currentWeight);
+      }
+    }
     setCurrentWeight({
       userID: user.sub,
       weight: 0,
       date: currentDate,
     });
+
     setisSubmitted(true);
     event.preventDefault();
   }
@@ -100,16 +109,20 @@ function Weight(props) {
       currentYearPattern.test(arrayEntry.date)
     );
     // CALCULATION FIRST YEAR ENTRY - LAST YEAR ENTRY
-    let firstEntryProgressYear = progressYearArray[0].weight;
-    let lastEntryProgressYear =
-      progressYearArray[progressYearArray.length - 1].weight;
-    progressYear = Number(
-      firstEntryProgressYear - lastEntryProgressYear
-    ).toFixed(1);
-    if (progressYear < 0) {
-      progressYear = -1 * progressYear + " KG zugenommen.";
+    if(progressYearArray.length >= 2) {
+      let firstEntryProgressYear = progressYearArray[0].weight;
+      let lastEntryProgressYear =
+        progressYearArray[progressYearArray.length - 1].weight;
+      progressYear = Number(
+        firstEntryProgressYear - lastEntryProgressYear
+      ).toFixed(1);
+      if (progressYear < 0) {
+        progressYear = -1 * progressYear + " KG zugenommen.";
+      } else {
+        progressYear = progressYear + " KG abgenommen.";
+      }
     } else {
-      progressYear = progressYear + " KG abgenommen.";
+      progressYear = 0 + " KG abgenommen.";
     }
 
     // PROGRESS MONTH
@@ -118,19 +131,23 @@ function Weight(props) {
       currentMonthPattern.test(arrayEntry.date)
     );
     // CALCULATION FIRST MONTH ENTRY - LAST MONTH ENTRY
-    let firstEntryProgressMonth = progressMonthArray[0].weight;
-    let lastEntryProgressMonth =
-      progressMonthArray[progressMonthArray.length - 1].weight;
-    progressMonth = Number(
-      firstEntryProgressMonth - lastEntryProgressMonth
-    ).toFixed(1);
-    if (progressMonth < 0) {
-      progressMonth = -1 * progressMonth + " KG zugenommen.";
+    if(progressMonthArray.length >= 2) {
+      let firstEntryProgressMonth = progressMonthArray[0].weight;
+      let lastEntryProgressMonth =
+        progressMonthArray[progressMonthArray.length - 1].weight;
+      progressMonth = Number(
+        firstEntryProgressMonth - lastEntryProgressMonth
+      ).toFixed(1);
+      if (progressMonth < 0) {
+        progressMonth = -1 * progressMonth + " KG zugenommen.";
+      } else {
+        progressMonth = progressMonth + " KG abgenommen.";
+      }
     } else {
-      progressMonth = progressMonth + " KG abgenommen.";
+      progressMonth = 0 + " KG abgenommen.";
     }
 
-    // TODO PROGRESS WEEK
+    // PROGRESS WEEK
     let progressMonthArrayCopy = progressMonthArray;
     progressMonthArrayCopy.reverse();
     let progressWeekArrayLength = 7;
@@ -201,27 +218,31 @@ function Weight(props) {
 
     // REVERSE ARRAY TO GET CORRECT ORDER AGAIN FOR CALCULATION
     progressWeekArray.reverse();
-
-    let firstEntryProgressWeek = progressWeekArray[0].weight;
-    let lastEntryProgressWeek =
-      progressWeekArray[progressWeekArray.length - 1].weight;
-    progressWeek = Number(
-      firstEntryProgressWeek - lastEntryProgressWeek
-    ).toFixed(1);
-    if (progressWeek < 0) {
-      progressWeek = -1 * progressWeek + " KG zugenommen.";
+    if (progressWeekArray.length >= 2) {
+      let firstEntryProgressWeek = progressWeekArray[0].weight;
+      console.log(firstEntryProgressWeek);
+      let lastEntryProgressWeek =
+        progressWeekArray[progressWeekArray.length - 1].weight;
+      progressWeek = Number(
+        firstEntryProgressWeek - lastEntryProgressWeek
+      ).toFixed(1);
+      if (progressWeek < 0) {
+        progressWeek = -1 * progressWeek + " KG zugenommen.";
+      } else {
+        progressWeek = progressWeek + " KG abgenommen.";
+      }
     } else {
-      progressWeek = progressWeek + " KG abgenommen.";
+      progressWeek = 0 + " KG abgenommen.";
     }
 
     // CURRENT PROGRESS
-    let lastEntryprogressCurrent =
+    let lastEntryProgressCurrent =
       props.weightData[props.weightData.length - 1].weight;
-    let beforeLastEntryprogressCurrent =
+    let beforelastEntryProgressCurrent =
       props.weightData[props.weightData.length - 2].weight;
     // CALCULATION LAST ENTRY - BEFORE LAST ENTRY
     progressCurrent = Number(
-      beforeLastEntryprogressCurrent - lastEntryprogressCurrent
+      beforelastEntryProgressCurrent - lastEntryProgressCurrent
     ).toFixed(1);
     if (progressCurrent < 0) {
       progressCurrent = -1 * progressCurrent + " KG zugenommen.";
@@ -260,9 +281,11 @@ function Weight(props) {
               onFocus={handleFocus}
             />
           )}
-          <button id="submitweightbutton" onClick={submitWeight}>
-            <span>Absenden</span>
-          </button>
+          {isSubmitted === false && (
+            <button id="submitweightbutton" onClick={submitWeight}>
+              <span>Absenden</span>
+            </button>
+          )}
         </div>
 
         <div className="table-container">
@@ -281,7 +304,7 @@ function Weight(props) {
                 <td>{progressMonth}</td>
               </tr>
               <tr>
-                <td>Woche:</td>
+                <td>letzte Woche:</td>
                 <td>{progressWeek}</td>
               </tr>
               <tr>

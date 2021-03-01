@@ -19,6 +19,7 @@ function Chart(props) {
   const { isAuthenticated } = useAuth0();
 
   let stroke = ["#00af91"];
+  console.log(props.weightData);
   if (props.weightData.length >= 2) {
     if (
       props.weightData[props.weightData.length - 2].weight >

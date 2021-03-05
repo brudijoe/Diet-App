@@ -15,12 +15,10 @@ function App(props) {
   const [isUserLoggedIn, setisUserLoggedIn] = useState(false);
 
   // STATE WEIGHT-DATA
-  const [weightData, setWeightData] = useState([
-    { userID: "", weight: 0, date: "" },
-  ]);
+  const [weightData, setWeightData] = useState([]);
 
   // REMOVE DEFAULT DATA FROM ARRAY
-  if (weightData.length === 2 && weightData[0].weight === "") {
+  if (weightData.length === 2 && weightData[0].userID === "") {
     const currentStateCopy = [...weightData];
     currentStateCopy.shift();
     setWeightData(currentStateCopy);

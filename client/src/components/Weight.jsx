@@ -1,45 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import moment from "moment";
+import "moment/locale/de";
 
 function Weight(props) {
   // AUTH0
   const { user, isAuthenticated } = useAuth0();
 
+  // MOMENT
+  let todayDate = moment().toDate();
+  let currentDate = moment().format("LL");
+  let currentMonth = moment().format("MM");
+  let displayTableMonth = moment().format("MMMM");
+  let currentYear = moment().format("YYYY");
+
   // STATE FOR WEIGHT OBJECT
   const [currentWeight, setCurrentWeight] = useState({
     userID: "",
     weight: 0,
-    date: "",
+    date: todayDate,
   });
 
-  // REMOVE DEFAULT DATA FROM ARRAY
-  if (currentWeight.length === 2 && currentWeight[0].userID === "") {
-    const currentStateCopy = [...setCurrentWeight];
-    currentStateCopy.shift();
-    setCurrentWeight(currentStateCopy);
-  }
-
-  // STATE FOR SUBMIT BUTTON
-  const [isSubmitted, setisSubmitted] = useState(false);
+  // STATE HIDE BUTTON/INPUT - SHOW LABEL
+  const [isHidden, setIsHidden] = useState(false);
   // STEATE FOR FOCUS
   const [isFocused, setisFocused] = useState(false);
-
-  // DATE
-  const today = new Date();
-  const dateOptions = {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  };
-  let currentDate = today.toLocaleDateString("de-DE", dateOptions);
-  let currentMonth = today.toLocaleDateString("de-DE", { month: "long" });
-  let currentYear = today.toLocaleDateString("de-DE", { year: "numeric" });
 
   // FUNCTIONS
   function handleFocus() {
     setisFocused(true);
     currentWeight.weight = "";
-    isFocused ?? setisFocused(false)
+    isFocused ?? setisFocused(false);
   }
 
   function handleChange(event) {
@@ -47,32 +38,50 @@ function Weight(props) {
     // TODO CHECK FOR IMPROVEMENTS
     setCurrentWeight({
       userID: user.sub,
-      weight: 0,
-      date: currentDate,
+      weight: currentWeight.weight,
+      date: todayDate,
     });
 
     setCurrentWeight((prevWeight) => {
       return {
         userID: user.sub,
         ...prevWeight,
-        [name]: value
+        [name]: value,
       };
     });
   }
 
+  useEffect(() => {
+    if (props.weightData.length >= 1) {
+      let currentDateWeightData = moment(
+        props.weightData[props.weightData.length - 1].date
+      ).format("LL");
+      let currentDate2 = moment().format("LL");
+      if (currentDateWeightData === currentDate2) {
+        setIsHidden(true);
+      }
+    }
+  }, [props.weightData]);
+
   // SUBMIT WEIGHT
   function submitWeight(event) {
-    props.onAdd(currentWeight);
+    if (
+      currentWeight.weight !== 0 &&
+      currentWeight.weight > 1 &&
+      currentWeight.weight < 999
+    ) {
+      props.onAdd(currentWeight);
+    }
     setCurrentWeight({
       userID: user.sub,
       weight: 0,
-      date: currentDate,
+      date: todayDate,
     });
-    setisSubmitted(true);
     event.preventDefault();
   }
 
   // WEIGHT PROGRESS
+  // TODO UM 0.0 KG abgenommen zu vermeiden, könnte man sich einfallen lassen ;-)
   let progressOverall = 0;
   let progressYear = 0;
   let progressMonth = 0;
@@ -100,42 +109,53 @@ function Weight(props) {
       currentYearPattern.test(arrayEntry.date)
     );
     // CALCULATION FIRST YEAR ENTRY - LAST YEAR ENTRY
-    let firstEntryProgressYear = progressYearArray[0].weight;
-    let lastEntryProgressYear =
-      progressYearArray[progressYearArray.length - 1].weight;
-    progressYear = Number(
-      firstEntryProgressYear - lastEntryProgressYear
-    ).toFixed(1);
-    if (progressYear < 0) {
-      progressYear = -1 * progressYear + " KG zugenommen.";
+    if (progressYearArray.length >= 2) {
+      let firstEntryProgressYear = progressYearArray[0].weight;
+      let lastEntryProgressYear =
+        progressYearArray[progressYearArray.length - 1].weight;
+      progressYear = Number(
+        firstEntryProgressYear - lastEntryProgressYear
+      ).toFixed(1);
+      if (progressYear < 0) {
+        progressYear = -1 * progressYear + " KG zugenommen.";
+      } else {
+        progressYear = progressYear + " KG abgenommen.";
+      }
     } else {
-      progressYear = progressYear + " KG abgenommen.";
+      progressYear = 0 + " KG abgenommen.";
     }
 
     // PROGRESS MONTH
-    const currentMonthPattern = new RegExp("\\b" + currentMonth + "\\b");
+
+    // TODO PROGRESSMONTHARRAY IST LEER WEIL KEIN MÄRZ MEHR
+    const currentMonthPattern = new RegExp(
+      "\\b" + currentYear + "-" + currentMonth + "\\b"
+    );
     let progressMonthArray = progressYearArray.filter((arrayEntry) =>
       currentMonthPattern.test(arrayEntry.date)
     );
     // CALCULATION FIRST MONTH ENTRY - LAST MONTH ENTRY
-    let firstEntryProgressMonth = progressMonthArray[0].weight;
-    let lastEntryProgressMonth =
-      progressMonthArray[progressMonthArray.length - 1].weight;
-    progressMonth = Number(
-      firstEntryProgressMonth - lastEntryProgressMonth
-    ).toFixed(1);
-    if (progressMonth < 0) {
-      progressMonth = -1 * progressMonth + " KG zugenommen.";
+    if (progressMonthArray.length >= 2) {
+      let firstEntryProgressMonth = progressMonthArray[0].weight;
+      let lastEntryProgressMonth =
+        progressMonthArray[progressMonthArray.length - 1].weight;
+      progressMonth = Number(
+        firstEntryProgressMonth - lastEntryProgressMonth
+      ).toFixed(1);
+      if (progressMonth < 0) {
+        progressMonth = -1 * progressMonth + " KG zugenommen.";
+      } else {
+        progressMonth = progressMonth + " KG abgenommen.";
+      }
     } else {
-      progressMonth = progressMonth + " KG abgenommen.";
+      progressMonth = 0 + " KG abgenommen.";
     }
 
-    // TODO PROGRESS WEEK
+    // PROGRESS WEEK
     let progressMonthArrayCopy = progressMonthArray;
     progressMonthArrayCopy.reverse();
     let progressWeekArrayLength = 7;
     let progressWeekArray = [];
-
     // CODE OPTIMIZATION: progressMonthArrayCopy can have up to 31 entries, so it should be capped at 7 for a week
     // CODE OPTIMIZATION: First 49 iterations
     // CODE OPTIMIZATION: Second 43 iterations with break statement
@@ -148,21 +168,13 @@ function Weight(props) {
           index2 < progressWeekArrayLength;
           index2++
         ) {
-          let today = new Date();
-          function addDays(today, days) {
-            let copyToday = new Date(Number(today));
-            copyToday.setDate(today.getDate() + days);
-            return copyToday;
-          }
-          let newDate = addDays(today, -Number(index2));
-          const dateOptions = {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          };
-          let testDate = newDate.toLocaleDateString("de-DE", dateOptions);
+          // MOMENT
+          let currentDate = moment().subtract(index2, "days").format("LL");
+          let currentProgressMonthArrayCopyDate = moment(
+            progressMonthArrayCopy[index].date
+          ).format("LL");
 
-          if (progressMonthArrayCopy[index].date === testDate) {
+          if (currentProgressMonthArrayCopyDate === currentDate) {
             progressWeekArray.push(progressMonthArrayCopy[index]);
             index2Increment++;
             break;
@@ -176,21 +188,13 @@ function Weight(props) {
           index2 < progressWeekArrayLength;
           index2++
         ) {
-          let today = new Date();
-          function addDays(today, days) {
-            let copyToday = new Date(Number(today));
-            copyToday.setDate(today.getDate() + days);
-            return copyToday;
-          }
-          let newDate = addDays(today, -Number(index2));
-          const dateOptions = {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          };
-          let testDate = newDate.toLocaleDateString("de-DE", dateOptions);
+          // MOMENT
+          let currentDate = moment().subtract(index2, "days").format("LL");
+          let currentProgressMonthArrayCopyDate = moment(
+            progressMonthArrayCopy[index].date
+          ).format("LL");
 
-          if (progressMonthArrayCopy[index].date === testDate) {
+          if (currentProgressMonthArrayCopyDate === currentDate) {
             progressWeekArray.push(progressMonthArrayCopy[index]);
             index2Increment++;
             break;
@@ -201,27 +205,30 @@ function Weight(props) {
 
     // REVERSE ARRAY TO GET CORRECT ORDER AGAIN FOR CALCULATION
     progressWeekArray.reverse();
-
-    let firstEntryProgressWeek = progressWeekArray[0].weight;
-    let lastEntryProgressWeek =
-      progressWeekArray[progressWeekArray.length - 1].weight;
-    progressWeek = Number(
-      firstEntryProgressWeek - lastEntryProgressWeek
-    ).toFixed(1);
-    if (progressWeek < 0) {
-      progressWeek = -1 * progressWeek + " KG zugenommen.";
+    if (progressWeekArray.length >= 2) {
+      let firstEntryProgressWeek = progressWeekArray[0].weight;
+      let lastEntryProgressWeek =
+        progressWeekArray[progressWeekArray.length - 1].weight;
+      progressWeek = Number(
+        firstEntryProgressWeek - lastEntryProgressWeek
+      ).toFixed(1);
+      if (progressWeek < 0) {
+        progressWeek = -1 * progressWeek + " KG zugenommen.";
+      } else {
+        progressWeek = progressWeek + " KG abgenommen.";
+      }
     } else {
-      progressWeek = progressWeek + " KG abgenommen.";
+      progressWeek = 0 + " KG abgenommen.";
     }
 
     // CURRENT PROGRESS
-    let lastEntryprogressCurrent =
+    let lastEntryProgressCurrent =
       props.weightData[props.weightData.length - 1].weight;
-    let beforeLastEntryprogressCurrent =
+    let beforelastEntryProgressCurrent =
       props.weightData[props.weightData.length - 2].weight;
     // CALCULATION LAST ENTRY - BEFORE LAST ENTRY
     progressCurrent = Number(
-      beforeLastEntryprogressCurrent - lastEntryprogressCurrent
+      beforelastEntryProgressCurrent - lastEntryProgressCurrent
     ).toFixed(1);
     if (progressCurrent < 0) {
       progressCurrent = -1 * progressCurrent + " KG zugenommen.";
@@ -234,19 +241,14 @@ function Weight(props) {
     isAuthenticated && (
       <form>
         <div className="input-container">
-          <label id="labeldate">Datum: </label>
+          <label id="labeldate">Datum:</label>
           <label id="labeldatevalue" name="date" onChange={handleChange}>
             {currentDate}
           </label>
 
-          <label id="labelweight">Aktuelles Gewicht in KG eingeben: </label>
+          <label id="labelweight">Aktuelles Gewicht in KG eingeben:</label>
 
-          {isSubmitted === true && (
-            <label id="labelsubmitted">
-              Bleib dran! Du kannst einmal täglich dein Gewicht eingeben.
-            </label>
-          )}
-          {isSubmitted === false && (
+          {isHidden === false && (
             <input
               type="number"
               id="inputweight"
@@ -260,9 +262,17 @@ function Weight(props) {
               onFocus={handleFocus}
             />
           )}
-          <button id="submitweightbutton" onClick={submitWeight}>
-            <span>Absenden</span>
-          </button>
+          {isHidden === false && (
+            <button id="submitweightbutton" onClick={submitWeight}>
+              <span>Absenden</span>
+            </button>
+          )}
+
+          {isHidden === true && (
+            <label id="labelsubmitted">
+              Bleib dran! Du kannst einmal täglich dein Gewicht eingeben.
+            </label>
+          )}
         </div>
 
         <div className="table-container">
@@ -277,15 +287,15 @@ function Weight(props) {
                 <td>{progressYear}</td>
               </tr>
               <tr>
-                <td>Monat {currentMonth}:</td>
+                <td>Monat {displayTableMonth}:</td>
                 <td>{progressMonth}</td>
               </tr>
               <tr>
-                <td>Woche:</td>
+                <td>letzte Woche:</td>
                 <td>{progressWeek}</td>
               </tr>
               <tr>
-                <td id="table-bottom-left">Aktuell:</td>
+                <td id="table-bottom-left">Aktueller Fortschritt:</td>
                 <td id="table-bottom-right">{progressCurrent}</td>
               </tr>
             </tbody>
